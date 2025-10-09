@@ -9,6 +9,7 @@
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
   {% block extra_css %}{% endblock %}
   </head>
 
@@ -16,12 +17,29 @@
 
     <nav class="navbar navbar-expand navbar-light bg-light">
         <div class="nav navbar-nav">
-            <a class="nav-item nav-link" href="{% url 'inicio'%}">inicio</a>
-            <a class="nav-item nav-link" href="{% url 'login'%}">login</a>
-            <a class="nav-item nav-link" href="{% url 'index'%}">index</a>
-            <a class="nav-item nav-link" href="{% url 'crear_materia'%}">crear</a>
+            <a class="nav-item nav-link" href="{% url 'inicio'%}">Inicio</a>
         </div>
+
+        {# Only show app navigation when the user is authenticated #}
+        {% if user.is_authenticated %}
+        <div class="nav navbar-nav ml-auto">
+            <a class="nav-item nav-link" href="{% url 'index' %}">Dashboard</a>
+            <a class="nav-item nav-link" href="{% url 'crear_materia' %}">Ingresar Materia Prima</a>
+            <a class="nav-item nav-link" href="{% url 'index_materia' %}">Lista Materia Prima</a>
+            <a class="nav-item nav-link" href="{% url 'editar_materia_no_id' %}">Editar</a>
+            <a class="nav-item nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+        </div>
+        {% endif %}
     </nav>
+
+    {# messages (for login errors, etc.) #}
+    <div class="container mt-3">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    </div>
 
 
     <div class="container">

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3_itwwv%q1!p(!7fyp#z%jsnbak%n9m8bsjrhd@mur9a0l=^q^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
 
 # Application definition
@@ -117,6 +117,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "Texcore" / "static"]
+
+# Where to redirect users to log in (used by login_required)
+LOGIN_URL = '/login/'
+# After successful login, redirect here by default
+LOGIN_REDIRECT_URL = '/libros/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

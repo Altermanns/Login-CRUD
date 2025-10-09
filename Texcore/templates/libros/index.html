@@ -1,4 +1,5 @@
 {% extends 'paginas/base.html' %}
+{% load static %}
 {% block titulo %}Listado de Materia Prima{% endblock %}
 
 
@@ -10,24 +11,31 @@
         <thead class="thead-light">
             <tr>
                 <th>ID</th>
-                <th>Nombre</th>
                 <th>Tipo</th>
                 <th>Cantidad</th>
                 <th>Unidad</th>
                 <th>Lote</th>
                 <th>Fecha Ingreso</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
         {% for materia in materias %}
             <tr>
                 <td>{{ materia.id }}</td>
-                <td>{{ materia.nombre }}</td>
+                
                 <td>{{ materia.tipo }}</td>
                 <td>{{ materia.cantidad }}</td>
                 <td>{{ materia.unidad_medida }}</td>
                 <td>{{ materia.lote }}</td>
                 <td>{{ materia.fecha_ingreso }}</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" href="{% url 'editar_materia' materia.id %}">Editar</a>
+                    <form method="post" action="{% url 'eliminar_materia' materia.id %}" style="display:inline-block; margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Eliminar este registro?');">Eliminar</button>
+                    </form>
+                </td>
             </tr>
         {% empty %}
             <tr>

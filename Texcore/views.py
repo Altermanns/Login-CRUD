@@ -1,65 +1,83 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from .forms import CreateMateriaForm
-
-# Minimal in-memory materias storage to make templates work without a model
-_MATERIAS = []
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.contrib import messages
+from .forms import MateriaForm
+from .models import Materia
 
 def inicio(request):
+    # Landing page: public, minimal actions
     return render(request, 'paginas/inicio.html')
+
 def login(request):
+    # Handle authentication: POST attempts to authenticate and redirect to dashboard
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect('index')
+        else:
+            messages.error(request, 'Usuario o contraseña inválidos')
+            return redirect('login')
     return render(request, 'paginas/login.html')
+
+
+@login_required
 def index(request):
-    return render(request, 'libros/index.html')
+    # Dashboard
+    return render(request, 'paginas/dashboard.html')
 
 
+@login_required
 def index_materia(request):
-    # Provide list of materias (empty if none)
-    return render(request, 'libros/index.html', {'materias': _MATERIAS})
+    materias = Materia.objects.all().order_by('-id')
+    return render(request, 'libros/index.html', {'materias': materias})
 
 
+@login_required
 def crear_materia(request):
     if request.method == 'POST':
-        form = CreateMateriaForm(request.POST)
+        form = MateriaForm(request.POST)
         if form.is_valid():
-            data = form.cleaned_data
-            new_id = max([m['id'] for m in _MATERIAS], default=0) + 1
-            _MATERIAS.append({
-                'id': new_id,
-                'nombre': data.get('nombre'),
-                'tipo': data.get('tipo'),
-                'cantidad': data.get('cantidad') or 0,
-                'unidad_medida': data.get('unidad_medida'),
-                'lote': data.get('lote'),
-                'fecha_ingreso': data.get('fecha_ingreso') and str(data.get('fecha_ingreso')) or ''
-            })
+            form.save()
             return redirect('index_materia')
     else:
-        form = CreateMateriaForm()
-
+        form = MateriaForm()
     return render(request, 'libros/crear.html', {'form': form})
 
 
+@login_required
 def editar_materia(request, materia_id):
-    materia = next((m for m in _MATERIAS if m['id'] == int(materia_id)), None)
+    materia = get_object_or_404(Materia, pk=materia_id)
     if request.method == 'POST':
-        if materia:
-            materia['nombre'] = request.POST.get('nombre', materia.get('nombre', ''))
-        return redirect('index_materia')
-    # build dummy form
-    class DummyForm(dict):
-        def as_p(self):
-            html = ''
-            if materia:
-                for k, v in materia.items():
-                    html += f'<p><label>{k}</label><input name="{k}" value="{v}"></p>'
-            return html
-
-    return render(request, 'libros/editar.html', {'form': DummyForm()})
+        form = MateriaForm(request.POST, instance=materia)
+        if form.is_valid():
+            form.save()
+            return redirect('index_materia')
+    else:
+        form = MateriaForm(instance=materia)
+    return render(request, 'libros/editar.html', {'form': form})
 
 
+@login_required
+@require_POST
 def eliminar_materia(request, materia_id):
-    global _MATERIAS
-    _MATERIAS = [m for m in _MATERIAS if m['id'] != int(materia_id)]
+    materia = get_object_or_404(Materia, pk=materia_id)
+    materia.delete()
+    messages.success(request, 'Materia eliminada correctamente.')
     return redirect('index_materia')
+
+
+def editar_materia_no_id(request):
+    """Handle requests to /materias/editar/ without an ID: redirect to index."""
+    return redirect('index_materia')
+
+
+def logout(request):
+    auth_logout(request)
+    return redirect('inicio')

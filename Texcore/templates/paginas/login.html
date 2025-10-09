@@ -8,22 +8,33 @@
 {% endblock %}
 
 {% block content %}
-		<div class="login-wrapper">
-			<div class="card login-card p-4">
-				<h2 class="text-center mb-3">Iniciar sesión</h2>
-				<form method="post" class="px-2">
-					{% csrf_token %}
-					<div class="form-group mb-3">
-						<label for="username" class="form-label">Usuario</label>
-						<input type="text" class="form-control" id="username" name="username" placeholder="Tu usuario">
-					</div>
-					<div class="form-group mb-3">
-						<label for="password" class="form-label">Contraseña</label>
-						<input type="password" class="form-control" id="password" name="password" placeholder="Tu contraseña">
-					</div>
-					<button type="submit" class="btn btn-primary">Entrar</button>
-				</form>
-			</div>
-		</div>
+
+<div class="login-split container">
+  <div class="login-left">
+    <div class="login-card">
+      <h1>Bienvenido de nuevo</h1>
+      <p class="form-text">Ingresa con tu cuenta para acceder al panel</p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Usuario o correo</label>
+          <div class="input-icon">
+            <input class="form-control" name="username" placeholder="usuario o correo">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Contraseña</label>
+          <div class="input-icon">
+            <input class="form-control" type="password" name="password" placeholder="contraseña">
+          </div>
+        </div>
+        <div class="d-grid mb-3">
+          <button class="btn btn-primary">Entrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</div>
 
 {% endblock %}

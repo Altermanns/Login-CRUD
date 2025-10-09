@@ -1,0 +1,33 @@
+{% extends 'paginas/base.html' %}
+{% block titulo %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4">Panel de Control</h1>
+  <p class="lead">Selecciona una acción rápida</p>
+
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5>Ingresar Materia Prima</h5>
+        <p>Registrar nueva materia prima en el sistema.</p>
+        <a class="btn btn-primary" href="{% url 'crear_materia' %}">Ingresar</a>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5>Lista de Materia Prima</h5>
+        <p>Ver y editar las materias prima registradas.</p>
+        <a class="btn btn-secondary" href="{% url 'index_materia' %}">Ver lista</a>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5>Editar Materia</h5>
+        <p>Ir a la sección de edición rápida.</p>
+        <a class="btn btn-outline-primary" href="{% url 'editar_materia_no_id' %}">Editar</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
