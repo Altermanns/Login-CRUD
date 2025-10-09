@@ -1,0 +1,13 @@
+{% extends 'paginas/base.html' %}
+{% block titulo %}Inicio{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="mb-4">Bienvenido al Sistema Textil</h1>
+    <p class="lead">Gestione fácilmente el registro y control de la materia prima de su empresa.</p>
+
+    <div class="mt-5">
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Iniciar Sesion</a>
+    </div>
+</div>
+{% endblock %}
