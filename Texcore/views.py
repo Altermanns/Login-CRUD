@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from .forms import CreateMateriaForm
 
 # Minimal in-memory materias storage to make templates work without a model
 _MATERIAS = []
@@ -20,19 +21,24 @@ def index_materia(request):
 
 def crear_materia(request):
     if request.method == 'POST':
-        # minimal create: read a name if provided
-        new_id = max([m['id'] for m in _MATERIAS], default=0) + 1
-        _MATERIAS.append({'id': new_id, 'nombre': request.POST.get('nombre', f'Materia {new_id}'),
-                          'tipo': request.POST.get('tipo', ''), 'cantidad': request.POST.get('cantidad', 0),
-                          'unidad_medida': request.POST.get('unidad_medida', ''), 'lote': request.POST.get('lote', ''),
-                          'fecha_ingreso': request.POST.get('fecha_ingreso', '')})
-        return redirect('index_materia')
-    # provide a dummy form object with as_p for the template
-    class DummyForm(dict):
-        def as_p(self):
-            return ''
+        form = CreateMateriaForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            new_id = max([m['id'] for m in _MATERIAS], default=0) + 1
+            _MATERIAS.append({
+                'id': new_id,
+                'nombre': data.get('nombre'),
+                'tipo': data.get('tipo'),
+                'cantidad': data.get('cantidad') or 0,
+                'unidad_medida': data.get('unidad_medida'),
+                'lote': data.get('lote'),
+                'fecha_ingreso': data.get('fecha_ingreso') and str(data.get('fecha_ingreso')) or ''
+            })
+            return redirect('index_materia')
+    else:
+        form = CreateMateriaForm()
 
-    return render(request, 'libros/crear.html', {'form': DummyForm()})
+    return render(request, 'libros/crear.html', {'form': form})
 
 
 def editar_materia(request, materia_id):
