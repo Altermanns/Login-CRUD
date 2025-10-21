@@ -9,31 +9,27 @@
 
 {% block content %}
 
-<div class="login-split container">
-  <div class="login-left">
-    <div class="login-card">
-      <h1>Bienvenido de nuevo</h1>
-      <p class="form-text">Ingresa con tu cuenta para acceder al panel</p>
-      <form method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-          <label class="form-label">Usuario o correo</label>
-          <div class="input-icon">
-            <input class="form-control" name="username" placeholder="usuario o correo">
-          </div>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Contraseña</label>
-          <div class="input-icon">
-            <input class="form-control" type="password" name="password" placeholder="contraseña">
-          </div>
-        </div>
-        <div class="d-grid mb-3">
-          <button class="btn btn-primary">Entrar</button>
-        </div>
-      </form>
-    </div>
-  </div>
+<div class="d-flex justify-content-center align-items-center vh-75">
+  <div class="card shadow-sm p-4" style="max-width:420px; width:100%;">
+    <h3 class="mb-2">Bienvenido de nuevo</h3>
+    <p class="text-muted mb-4">Ingresa con tu cuenta para acceder al panel</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="form-group mb-3">
+        <label for="id_username">Usuario o correo</label>
+        <input id="id_username" class="form-control" name="username" placeholder="usuario o correo">
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="id_password">Contraseña</label>
+        <input id="id_password" class="form-control" type="password" name="password" placeholder="contraseña">
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center">
+        <button class="btn btn-primary">Entrar</button>
+        <a href="{% url 'inicio' %}" class="text-muted">Volver</a>
+      </div>
+    </form>
   </div>
 </div>
 

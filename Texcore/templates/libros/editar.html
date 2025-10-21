@@ -8,12 +8,58 @@
 
     <form method="post">
         {% csrf_token %}
-        <div class="card p-4 shadow-sm">
-            {{ form.as_p }}
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">Actualizar</button>
-                <a href="{% url 'index_materia' %}" class="btn btn-secondary">Cancelar</a>
+        <div class="card p-4 shadow-sm form-card">
+            <div class="form-row">
+                <div class="form-group col-12">
+                    {{ form.tipo.label_tag }}
+                    {{ form.tipo }}
+                    {% if form.tipo.errors %}
+                        <div class="text-danger small">{{ form.tipo.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group col-md-6">
+                    {{ form.cantidad.label_tag }}
+                    {{ form.cantidad }}
+                    {% if form.cantidad.errors %}
+                        <div class="text-danger small">{{ form.cantidad.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group col-md-6">
+                    {{ form.unidad_medida.label_tag }}
+                    {{ form.unidad_medida }}
+                    {% if form.unidad_medida.errors %}
+                        <div class="text-danger small">{{ form.unidad_medida.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group col-12">
+                    {{ form.lote.label_tag }}
+                    {{ form.lote }}
+                    {% if form.lote.errors %}
+                        <div class="text-danger small">{{ form.lote.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group col-md-6">
+                    {{ form.fecha_ingreso.label_tag }}
+                    {{ form.fecha_ingreso }}
+                    {% if form.fecha_ingreso.errors %}
+                        <div class="text-danger small">{{ form.fecha_ingreso.errors|striptags }}</div>
+                    {% endif %}
+                </div>
             </div>
+                        <div class="text-center mt-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    Actualizar
+                                </button>
+                                <a href="{% url 'index_materia' %}" class="btn btn-secondary">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    Cancelar
+                                </a>
+                        </div>
         </div>
     </form>
 </div>
