@@ -12,11 +12,9 @@ class MateriaModelTest(TestCase):
 class MateriaViewsTest(TestCase):
     def setUp(self):
         self.client = Client()
-        # Create a user and log in if necessary in the future.
 
     def test_listar_materias_view_unauthenticated_redirects(self):
         url = reverse('index_materia')
         response = self.client.get(url)
-        # Should redirect to login (default Django behavior)
         self.assertIn(response.status_code, (301, 302))
 

@@ -13,6 +13,12 @@ html, body {
   --card-bg: #ffffff;
 }
 
+/* Footer sizing for sticky footer */
+:root{ --footer-height: 64px }
+
+/* ensure content does not get hidden behind the sticky footer */
+body{ padding-bottom: var(--footer-height); }
+
 .navbar{
   background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));
   border-bottom: 1px solid rgba(15,23,42,0.04);
@@ -70,4 +76,57 @@ table.table tbody td{ vertical-align:middle }
 @media (max-width: 576px){
   .container{ padding:0 0.75rem }
   .hero h1{ font-size:1.6rem }
+}
+
+/* responsive tweaks */
+@media (max-width: 768px){
+  /* stack action buttons */
+  .btn + .btn{ margin-left:0; margin-top:0.5rem }
+  .form-card { padding: 1rem }
+  main .container { padding: 0 0.5rem }
+}
+
+@media (max-width: 480px){
+  /* tables scroll horizontally on small screens */
+  .table-responsive { overflow-x: auto }
+  /* forms full width */
+  .form-card .form-group{ width:100% }
+  /* disable hover lift on touch devices for better performance */
+  .card:hover{ transform:none }
+}
+
+/* sticky footer styles */
+.site-footer{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--footer-height);
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  background: #fff;
+}
+
+@media (max-width: 576px){
+  :root{ --footer-height: 88px }
+}
+
+@media print{
+  .site-footer{ position: static }
+  body{ padding-bottom: 0 }
+}
+
+/* make form rows into a responsive two-column grid on md+ */
+.form-card .form-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem 1.25rem;
+}
+
+/* form groups that should span full width (col-12) */
+.form-card .form-group.col-12{ grid-column: 1 / -1 }
+
+@media (max-width: 767px){
+  .form-card .form-row{ grid-template-columns: 1fr }
 }
