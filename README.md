@@ -1,3 +1,39 @@
+# Login-CRUD (Texcore)
+
+Pequeños refactors para mejorar legibilidad y organización siguiendo principios de Clean Code.
+
+Qué cambié:
+- Separé lógica de autenticación y consultas en `services.py`.
+- Simplifiqué y renombré vistas para mayor claridad.
+- Unifiqué el formulario en un `ModelForm` con validación.
+- Registré el modelo `Materia` en el admin.
+
+Cómo ejecutar (entorno Django típico):
+
+1. Crear y activar virtualenv, instalar dependencias (requirements no incluido):
+
+```powershell
+# Windows PowerShell
+python -m venv .venv; .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+2. Migraciones y correr servidor:
+
+```powershell
+python manage.py migrate
+python manage.py runserver
+```
+
+3. Ejecutar tests:
+
+```powershell
+python manage.py test
+```
+
+Notas:
+- Mantengo los nombres de rutas (name=...) que usan las plantillas para facilitar la integración.
+- Próximos pasos recomendados: limpiar plantillas, añadir más tests y configurar linter.
 # LoginCRUD — Sistema básico de CRUD de Materia Prima
 
 Proyecto Django que implementa un sistema pequeño para gestionar "Materia Prima" con autenticación y páginas protegidas.
