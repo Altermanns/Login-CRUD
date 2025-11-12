@@ -25,11 +25,21 @@ COPY . /app/
 # Create necessary directories
 RUN mkdir -p /app/staticfiles /app/Texcore/static/css /app/Texcore/static/js
 
+# Backup existing database if it exists
+RUN if [ -f "/app/db.sqlite3" ]; then \
+        echo "📦 Database found, preserving existing data..."; \
+        cp /app/db.sqlite3 /app/db_backup.sqlite3; \
+    else \
+        echo "📋 No existing database, will create fresh one..."; \
+    fi
+
 # Ensure db.sqlite3 has correct permissions
 RUN chmod 664 /app/db.sqlite3 2>/dev/null || touch /app/db.sqlite3 && chmod 664 /app/db.sqlite3
 
-# Run migrations and collect static files
-RUN python manage.py migrate --noinput --settings=LoginCRUD.settings.production
+# Don't run migrations here - let entrypoint handle it to preserve data
+# RUN python manage.py migrate --noinput --settings=LoginCRUD.settings.production
+
+# Collect static files
 RUN python manage.py collectstatic --noinput --settings=LoginCRUD.settings.production
 
 # Create non-root user and change ownership

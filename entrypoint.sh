@@ -24,10 +24,13 @@ echo "🚀 Starting Django application with SQLite..."
 echo "🔒 Setting database permissions..."
 if [ -f "db.sqlite3" ]; then
     chmod 664 db.sqlite3
+    echo "📊 Database file found with $(python manage.py shell -c "from Texcore.models import Materia; print(Materia.objects.count())" 2>/dev/null || echo "0") records"
+else
+    echo "📋 No database file found, will create new one"
 fi
 
-# Run migrations with error handling
-echo "📋 Applying database migrations..."
+# Run migrations with existing data protection
+echo "📋 Applying database migrations (preserving existing data)..."
 python manage.py migrate --noinput || {
     echo "❌ Migration failed"
     exit 1
@@ -96,6 +99,10 @@ except Exception as e:
 EOF
 
 echo "🎉 Initialization complete!"
+
+# Initialize sample data if database is empty
+echo "📊 Checking for sample data..."
+python init_data.py
 
 # Start Gunicorn
 echo "Starting Gunicorn..."

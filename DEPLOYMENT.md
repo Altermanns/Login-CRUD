@@ -23,8 +23,13 @@ El sistema creará automáticamente estos usuarios en el primer deploy:
 ### 3. Base de Datos
 
 - ✅ **SQLite** incluida en el contenedor Docker
-- ✅ **Persistente** - Los datos se mantienen con el contenedor
+- ⚠️ **Importante**: En Render, los datos se recrean en cada deploy
+- ✅ **Datos de muestra**: Se crean automáticamente usuarios y materias de ejemplo
 - ✅ **Sin configuración externa** - Todo funciona automáticamente
+
+> **Nota sobre persistencia**: Render reconstruye el contenedor en cada deploy, 
+> por lo que los datos de SQLite se resetean. Para datos permanentes en producción,
+> considera usar PostgreSQL de Render como servicio externo.
 
 ## 🔧 Pasos para Deployment en Render
 
@@ -223,3 +228,37 @@ git push origin main
 ```
 
 ¡Listo para Render! 🚀
+
+## 💾 **Persistencia de Datos - IMPORTANTE**
+
+### ⚠️ **Limitación de SQLite en Render:**
+
+- **Cada deploy resetea la base de datos** porque Render reconstruye el contenedor
+- **Los datos se pierden** en cada actualización de código
+- **Datos de muestra se recrean automáticamente** en cada inicio
+
+### 🔄 **Solución automática implementada:**
+
+1. **Usuarios por defecto**: admin/operario se crean automáticamente
+2. **Datos de muestra**: 4 materias de ejemplo se insertan automáticamente  
+3. **Sin intervención manual**: Todo funciona al hacer deploy
+
+### 🗄️ **Para datos REALMENTE persistentes** (opcional):
+
+Si necesitas que los datos NO se pierdan entre deploys, puedes configurar PostgreSQL:
+
+1. **Crear base de datos PostgreSQL en Render**:
+   - Ve a Dashboard → "New" → "PostgreSQL"
+   - Copia la `DATABASE_URL` que te proporciona
+
+2. **Agregar variable de entorno**:
+   ```
+   DATABASE_URL=postgresql://usuario:password@host:port/database
+   ```
+
+3. **Actualizar requirements.txt**:
+   ```
+   psycopg2-binary==2.9.7
+   ```
+
+Pero para desarrollo y demo, **SQLite con datos automáticos es perfecto** ✅
