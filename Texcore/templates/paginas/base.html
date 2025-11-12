@@ -41,10 +41,75 @@
 
           {% if user.is_authenticated %}
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'crear_materia' %}">Ingresar</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'index_materia' %}">Listado</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a></li>
+            <!-- Admin navigation -->
+            {% if user.profile.is_admin %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'admin_dashboard' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-1">
+                <path d="M3 3v18h18V3H3zm16 16H5V5h14v14z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+              Dashboard Admin
+            </a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'index_materia' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-1">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+              Reportes
+            </a></li>
+            
+            <!-- Operario navigation -->
+            {% elif user.profile.is_operario %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'operario_dashboard' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-1">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+              Mi Dashboard
+            </a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'crear_materia' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-1">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Ingresar
+            </a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'index_materia' %}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-1">
+                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+              Listado
+            </a></li>
+            {% endif %}
+            
+            <!-- User menu -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-1">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5"/>
+                  <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                {{ user.first_name|default:user.username }}
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                <span class="dropdown-item-text">
+                  <small class="text-muted">
+                    {% if user.profile %}
+                      Rol: {{ user.profile.get_role_display }}
+                    {% else %}
+                      Sin perfil asignado
+                    {% endif %}
+                  </small>
+                </span>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'logout' %}">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                  Cerrar sesión
+                </a>
+              </div>
+            </li>
           </ul>
           {% else %}
           <ul class="navbar-nav ml-auto">
