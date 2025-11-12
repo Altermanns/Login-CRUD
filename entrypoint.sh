@@ -42,10 +42,7 @@ python manage.py collectstatic --noinput --clear || {
 
 # Create default users with better error handling
 echo "👥 Creating default users..."
-python manage.py shell << 'END' || {
-    echo "❌ User creation failed"
-    exit 1
-}
+python manage.py shell << 'EOF'
 try:
     from django.contrib.auth.models import User
     from Texcore.models import Profile
@@ -96,7 +93,7 @@ try:
 except Exception as e:
     print(f"❌ Error during user creation: {e}")
     raise
-END
+EOF
 
 echo "🎉 Initialization complete!"
 
