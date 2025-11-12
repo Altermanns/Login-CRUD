@@ -115,8 +115,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "Texcore" / "static"]
+
+# Static files collected for production
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Where to redirect users to log in (used by login_required)
 LOGIN_URL = '/login/'

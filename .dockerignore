@@ -1,0 +1,84 @@
+# Git
+.git
+.gitignore
+README.md
+CHANGELOG.md
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Local development files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Static files (will be collected during build)
+staticfiles/
+static_root/
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+
+# Documentation
+docs/
+*.md
+
+# Tests
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
