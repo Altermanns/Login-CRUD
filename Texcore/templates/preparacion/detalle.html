@@ -1,0 +1,155 @@
+{% extends "paginas/base.html" %}
+
+{% block title %}Detalle Preparación #{{ preparacion.id }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-info-circle"></i> 
+                        Preparación #{{ preparacion.id }} - {{ preparacion.get_tipo_proceso_display }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-cube"></i> Materia Prima</h6>
+                            <p><strong>{{ preparacion.materia_prima.tipo }}</strong><br>
+                            <small class="text-muted">Lote: {{ preparacion.materia_prima.lote }}</small></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-user"></i> Preparador</h6>
+                            <p>{{ preparacion.usuario_preparador.first_name }} {{ preparacion.usuario_preparador.last_name }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-weight-hanging"></i> Cantidad</h6>
+                            <p>{{ preparacion.cantidad_procesada }} kg</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-percentage"></i> Porcentaje Mezcla</h6>
+                            <p>{% if preparacion.porcentaje_mezcla %}{{ preparacion.porcentaje_mezcla }}%{% else %}No especificado{% endif %}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-star"></i> Calidad</h6>
+                            <p>{% if preparacion.calidad_resultado %}{{ preparacion.get_calidad_resultado_display }}{% else %}No evaluada{% endif %}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h6><i class="fas fa-clipboard"></i> Observaciones</h6>
+                            <p>{{ preparacion.observaciones|default:"Sin observaciones" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cogs"></i> Estado y Acciones
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <h4>
+                        <span class="badge 
+                            {% if preparacion.estado == 'pendiente' %}badge-warning
+                            {% elif preparacion.estado == 'en_proceso' %}badge-primary
+                            {% elif preparacion.estado == 'completada' %}badge-success
+                            {% else %}badge-danger{% endif %} p-3">
+                            {{ preparacion.get_estado_display }}
+                        </span>
+                    </h4>
+                    
+                    <p><strong>Fecha Inicio:</strong><br>{{ preparacion.fecha_inicio|date:"d/m/Y H:i" }}</p>
+                    
+                    {% if preparacion.fecha_completado %}
+                    <p><strong>Fecha Completado:</strong><br>{{ preparacion.fecha_completado|date:"d/m/Y H:i" }}</p>
+                    {% endif %}
+
+                    {% if user.profile.is_preparador and preparacion.usuario_preparador == user %}
+                    <div class="mt-3">
+                        {% if preparacion.estado == 'pendiente' %}
+                            <a href="{% url 'iniciar_preparacion' preparacion.id %}" class="btn btn-success btn-block mb-2">
+                                <i class="fas fa-play"></i> Iniciar Proceso
+                            </a>
+                            <a href="{% url 'editar_preparacion' preparacion.id %}" class="btn btn-outline-primary btn-block">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                        {% elif preparacion.estado == 'en_proceso' %}
+                            <a href="{% url 'agregar_detalle_preparacion' preparacion.id %}" class="btn btn-info btn-block mb-2">
+                                <i class="fas fa-plus"></i> Agregar Detalles
+                            </a>
+                            <a href="{% url 'completar_preparacion' preparacion.id %}" class="btn btn-warning btn-block">
+                                <i class="fas fa-check"></i> Completar Proceso
+                            </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-3">
+                        <a href="{% url 'listar_preparaciones' %}" class="btn btn-outline-secondary btn-block">
+                            <i class="fas fa-arrow-left"></i> Volver a Lista
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if detalles %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-microscope"></i> Detalles Técnicos del Proceso
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for detalle in detalles %}
+                    <div class="border rounded p-3 mb-3">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <small class="text-muted">Temperatura</small><br>
+                                <strong>{% if detalle.temperatura %}{{ detalle.temperatura }}°C{% else %}N/A{% endif %}</strong>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted">Humedad</small><br>
+                                <strong>{% if detalle.humedad %}{{ detalle.humedad }}%{% else %}N/A{% endif %}</strong>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted">Tiempo</small><br>
+                                <strong>{% if detalle.tiempo_proceso %}{{ detalle.tiempo_proceso }} min{% else %}N/A{% endif %}</strong>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted">Equipo</small><br>
+                                <strong>{{ detalle.equipo_utilizado|default:"N/A" }}</strong>
+                            </div>
+                        </div>
+                        {% if detalle.notas_tecnicas %}
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <small class="text-muted">Notas Técnicas:</small><br>
+                                <p class="mb-0">{{ detalle.notas_tecnicas }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <small class="text-muted">Registrado: {{ detalle.fecha_registro|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

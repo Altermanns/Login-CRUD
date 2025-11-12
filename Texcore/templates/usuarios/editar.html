@@ -1,0 +1,158 @@
+{% extends "paginas/base.html" %}
+
+{% block title %}Editar Usuario{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-user-edit"></i> Editar Usuario: {{ usuario.username }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="username" class="form-label">
+                                        <i class="fas fa-user"></i> Nombre de Usuario
+                                    </label>
+                                    <input type="text" class="form-control" id="username" 
+                                           value="{{ usuario.username }}" readonly 
+                                           style="background-color: #f8f9fa;">
+                                    <small class="form-text text-muted">
+                                        El nombre de usuario no se puede modificar.
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="email" class="form-label">
+                                        <i class="fas fa-envelope"></i> Email *
+                                    </label>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           required value="{{ usuario.email }}" placeholder="ejemplo@empresa.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="first_name" class="form-label">
+                                        <i class="fas fa-id-card"></i> Nombre *
+                                    </label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" 
+                                           required maxlength="150" value="{{ usuario.first_name }}" placeholder="Juan">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="last_name" class="form-label">
+                                        <i class="fas fa-id-card"></i> Apellido *
+                                    </label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" 
+                                           required maxlength="150" value="{{ usuario.last_name }}" placeholder="Pérez">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="role" class="form-label">
+                                        <i class="fas fa-user-tag"></i> Rol *
+                                    </label>
+                                    <select class="form-select form-control" id="role" name="role" required>
+                                        <option value="">Seleccione un rol</option>
+                                        <option value="admin" 
+                                                {% if usuario.profile.role == 'admin' %}selected{% endif %}>
+                                            Administrativo
+                                        </option>
+                                        <option value="operario" 
+                                                {% if usuario.profile.role == 'operario' %}selected{% endif %}>
+                                            Operario
+                                        </option>
+                                        <option value="preparador" 
+                                                {% if usuario.profile.role == 'preparador' %}selected{% endif %}>
+                                            Preparador
+                                        </option>
+                                    </select>
+                                    <small class="form-text text-muted">
+                                        <strong>Administrativo:</strong> Acceso completo al sistema<br>
+                                        <strong>Operario:</strong> Solo gestión de materias primas<br>
+                                        <strong>Preparador:</strong> Solo preparación de materias primas
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-toggle-on"></i> Estado del Usuario
+                                    </label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active"
+                                               {% if usuario.is_active %}checked{% endif %}>
+                                        <label class="form-check-label" for="is_active">
+                                            Usuario activo
+                                        </label>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Los usuarios inactivos no pueden iniciar sesión.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-info-circle"></i> Información del Usuario
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <small class="text-muted">
+                                            <strong>Fecha de registro:</strong><br>
+                                            {{ usuario.date_joined|date:"d/m/Y H:i" }}
+                                        </small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted">
+                                            <strong>Última conexión:</strong><br>
+                                            {% if usuario.last_login %}
+                                                {{ usuario.last_login|date:"d/m/Y H:i" }}
+                                            {% else %}
+                                                Nunca
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                            <a href="{% url 'listar_usuarios' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>* Campos obligatorios | Para cambiar la contraseña, contacte al administrador del sistema</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

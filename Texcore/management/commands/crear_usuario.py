@@ -13,9 +13,9 @@ class Command(BaseCommand):
         parser.add_argument(
             '--role',
             type=str,
-            choices=['operario', 'admin'],
+            choices=['operario', 'admin', 'preparador'],
             default='operario',
-            help='Rol del usuario (operario o admin)'
+            help='Rol del usuario (operario, admin o preparador)'
         )
         parser.add_argument(
             '--first_name',

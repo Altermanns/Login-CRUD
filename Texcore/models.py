@@ -8,6 +8,7 @@ class Profile(models.Model):
     """Profile model to extend User with role information."""
     ROLE_CHOICES = [
         ('operario', 'Operario'),
+        ('preparador', 'Preparador'),
         ('admin', 'Administrativo'),
     ]
     
@@ -23,6 +24,12 @@ class Profile(models.Model):
         return self.role == 'admin'
     
     @property
+    def is_operario(self):
+        return self.role == 'operario'
+    
+    @property
+    def is_preparador(self):
+        return self.role == 'preparador'
     def is_operario(self):
         return self.role == 'operario'
 
@@ -53,4 +60,115 @@ class Materia(models.Model):
     def __str__(self):
         """Return a human-friendly representation: prefer tipo and lote."""
         return f"{self.tipo} - {self.lote}" if self.tipo else f"{self.lote}"
+
+
+class PreparacionMateria(models.Model):
+    """Modelo para el proceso de preparación de materias primas."""
+    
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('en_proceso', 'En Proceso'),
+        ('completada', 'Completada'),
+        ('rechazada', 'Rechazada'),
+    ]
+    
+    TIPO_PROCESO_CHOICES = [
+        ('limpieza', 'Limpieza'),
+        ('apertura', 'Apertura'),
+        ('mezclado', 'Mezclado'),
+        ('ajuste_proporciones', 'Ajuste de Proporciones'),
+    ]
+    
+    # Relación con la materia prima original
+    materia_prima = models.ForeignKey(Materia, on_delete=models.CASCADE, null=True,
+                                     help_text="Materia prima a procesar")
+    
+    # Información del proceso
+    tipo_proceso = models.CharField(max_length=50, choices=TIPO_PROCESO_CHOICES,
+                                   help_text="Tipo de proceso de preparación")
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    
+    # Cantidades y proporciones
+    cantidad_procesada = models.DecimalField(max_digits=10, decimal_places=2, default=0,
+                                           help_text="Cantidad procesada en kg")
+    porcentaje_mezcla = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True,
+                                          help_text="Porcentaje en la mezcla final (%)")
+    
+    # Resultado y calidad
+    observaciones = models.TextField(blank=True, 
+                                   help_text="Observaciones del proceso de preparación")
+    calidad_resultado = models.CharField(max_length=20, choices=[
+        ('excelente', 'Excelente'),
+        ('buena', 'Buena'),
+        ('regular', 'Regular'),
+        ('deficiente', 'Deficiente'),
+    ], null=True, blank=True)
+    
+    # Control de fechas y usuario
+    fecha_inicio = models.DateTimeField(auto_now_add=True)
+    fecha_completado = models.DateTimeField(null=True, blank=True)
+    usuario_preparador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
+                                         help_text="Usuario preparador que realizó el proceso")
+    
+    class Meta:
+        ordering = ['-fecha_inicio']
+        verbose_name = 'Preparación de Materia'
+        verbose_name_plural = 'Preparaciones de Materias'
+    
+    def __str__(self):
+        return f"{self.get_tipo_proceso_display()} - {self.materia_prima.tipo} ({self.get_estado_display()})"
+    
+    @property
+    def duracion_proceso(self):
+        """Calcula la duración del proceso si está completado."""
+        if self.fecha_completado and self.fecha_inicio:
+            return self.fecha_completado - self.fecha_inicio
+        return None
+    
+    @property
+    def is_completado(self):
+        return self.estado == 'completada'
+    
+    @property
+    def is_en_proceso(self):
+        return self.estado == 'en_proceso'
+
+
+class DetallePreparacion(models.Model):
+    """Detalles específicos del proceso de preparación."""
+    
+    preparacion = models.ForeignKey(PreparacionMateria, on_delete=models.CASCADE,
+                                   related_name='detalles')
+    
+    # Parámetros del proceso
+    temperatura = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True,
+                                    help_text="Temperatura del proceso (°C)")
+    humedad = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True,
+                                help_text="Humedad relativa (%)")
+    tiempo_proceso = models.IntegerField(null=True, blank=True,
+                                       help_text="Tiempo de proceso en minutos")
+    
+    # Equipos utilizados
+    equipo_utilizado = models.CharField(max_length=100, blank=True,
+                                      help_text="Equipo o máquina utilizada")
+    
+    # Resultados específicos
+    rendimiento = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True,
+                                    help_text="Rendimiento del proceso (%)")
+    merma = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True,
+                               help_text="Porcentaje de merma (%)")
+    
+    # Notas adicionales
+    notas_tecnicas = models.TextField(blank=True,
+                                    help_text="Notas técnicas del proceso")
+    
+    fecha_registro = models.DateTimeField(auto_now_add=True, null=True)
+    
+    class Meta:
+        ordering = ['-fecha_registro']
+        verbose_name = 'Detalle de Preparación'
+        verbose_name_plural = 'Detalles de Preparación'
+    
+    def __str__(self):
+        return f"Detalle - {self.preparacion}"
 

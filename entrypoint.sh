@@ -100,6 +100,27 @@ try:
         print(f'✅ Demo operario {operario_username} created successfully')
     else:
         print(f'ℹ️ Operario {operario_username} already exists')
+
+    # Create demo preparador if not exists
+    preparador_username = os.environ.get('PREPARADOR_USERNAME', 'preparador')
+    preparador_email = os.environ.get('PREPARADOR_EMAIL', 'preparador@textilapp.com')
+    preparador_password = os.environ.get('PREPARADOR_PASSWORD', 'preparador123')
+
+    if not User.objects.filter(username=preparador_username).exists():
+        preparador_user = User.objects.create_user(
+            username=preparador_username,
+            email=preparador_email,
+            password=preparador_password,
+            first_name='Demo',
+            last_name='Preparador'
+        )
+        # Ensure profile exists with preparador role
+        profile, created = Profile.objects.get_or_create(user=preparador_user)
+        profile.role = 'preparador'
+        profile.save()
+        print(f'✅ Demo preparador {preparador_username} created successfully')
+    else:
+        print(f'ℹ️ Preparador {preparador_username} already exists')
         
 except Exception as e:
     print(f"❌ Error during user creation: {e}")

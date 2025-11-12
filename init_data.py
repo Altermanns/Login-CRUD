@@ -26,10 +26,27 @@ def create_sample_data():
         
         print("📦 Creando datos de muestra...")
         
-        # Obtener usuarios admin y operario
+        # Obtener usuarios admin, operario y preparador
         try:
             admin_user = User.objects.get(username='admin')
             operario_user = User.objects.get(username='operario')
+            
+            # Intentar obtener preparador, crear si no existe
+            try:
+                preparador_user = User.objects.get(username='preparador')
+            except User.DoesNotExist:
+                preparador_user = User.objects.create_user(
+                    username='preparador',
+                    email='preparador@textilapp.com',
+                    password='preparador123',
+                    first_name='Demo',
+                    last_name='Preparador'
+                )
+                profile, created = Profile.objects.get_or_create(user=preparador_user)
+                profile.role = 'preparador'
+                profile.save()
+                print("✅ Usuario preparador creado automáticamente")
+                
         except User.DoesNotExist:
             print("❌ Los usuarios admin/operario no existen. Ejecute la creación de usuarios primero.")
             return

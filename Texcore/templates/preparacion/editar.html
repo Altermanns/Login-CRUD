@@ -1,0 +1,186 @@
+{% extends "paginas/base.html" %}
+
+{% block title %}Editar Preparación #{{ preparacion.id }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> 
+                        Editar Preparación #{{ preparacion.id }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if preparacion.estado != 'pendiente' %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Nota:</strong> Esta preparación ya ha sido iniciada. Solo se pueden modificar algunos campos.
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.materia_prima.id_for_label }}">
+                                        <i class="fas fa-cube"></i> Materia Prima
+                                    </label>
+                                    {{ form.materia_prima }}
+                                    {% if form.materia_prima.errors %}
+                                        <div class="text-danger">
+                                            {{ form.materia_prima.errors }}
+                                        </div>
+                                    {% endif %}
+                                    {% if preparacion.estado != 'pendiente' %}
+                                    <small class="text-muted">No se puede cambiar después de iniciar el proceso</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.tipo_proceso.id_for_label }}">
+                                        <i class="fas fa-cog"></i> Tipo de Proceso
+                                    </label>
+                                    {{ form.tipo_proceso }}
+                                    {% if form.tipo_proceso.errors %}
+                                        <div class="text-danger">
+                                            {{ form.tipo_proceso.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.cantidad_procesada.id_for_label }}">
+                                        <i class="fas fa-weight-hanging"></i> Cantidad a Procesar (kg)
+                                    </label>
+                                    {{ form.cantidad_procesada }}
+                                    {% if form.cantidad_procesada.errors %}
+                                        <div class="text-danger">
+                                            {{ form.cantidad_procesada.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.porcentaje_mezcla.id_for_label }}">
+                                        <i class="fas fa-percentage"></i> Porcentaje de Mezcla (%)
+                                    </label>
+                                    {{ form.porcentaje_mezcla }}
+                                    {% if form.porcentaje_mezcla.errors %}
+                                        <div class="text-danger">
+                                            {{ form.porcentaje_mezcla.errors }}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Opcional - para procesos de mezcla</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if preparacion.estado != 'pendiente' %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="{{ form.calidad_resultado.id_for_label }}">
+                                        <i class="fas fa-star"></i> Calidad del Resultado
+                                    </label>
+                                    {{ form.calidad_resultado }}
+                                    {% if form.calidad_resultado.errors %}
+                                        <div class="text-danger">
+                                            {{ form.calidad_resultado.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <label for="{{ form.observaciones.id_for_label }}">
+                                <i class="fas fa-clipboard"></i> Observaciones
+                            </label>
+                            {{ form.observaciones }}
+                            {% if form.observaciones.errors %}
+                                <div class="text-danger">
+                                    {{ form.observaciones.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-success btn-block">
+                                    <i class="fas fa-save"></i> Guardar Cambios
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{% url 'detalle_preparacion' preparacion.id %}" class="btn btn-secondary btn-block">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if preparacion.estado != 'pendiente' %}
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> 
+                        Información del Proceso
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p><strong>Estado Actual:</strong><br>
+                            <span class="badge 
+                                {% if preparacion.estado == 'en_proceso' %}badge-primary
+                                {% elif preparacion.estado == 'completada' %}badge-success
+                                {% else %}badge-danger{% endif %}">
+                                {{ preparacion.get_estado_display }}
+                            </span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Fecha Inicio:</strong><br>
+                            {{ preparacion.fecha_inicio|date:"d/m/Y H:i" }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            {% if preparacion.fecha_completado %}
+                            <p><strong>Fecha Completado:</strong><br>
+                            {{ preparacion.fecha_completado|date:"d/m/Y H:i" }}</p>
+                            {% else %}
+                            <p><strong>Fecha Completado:</strong><br>
+                            <span class="text-muted">En proceso</span></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Deshabilitar campos si el proceso ya fue iniciado
+    {% if preparacion.estado != 'pendiente' %}
+    const materiaPrimaField = document.getElementById('{{ form.materia_prima.id_for_label }}');
+    if (materiaPrimaField) {
+        materiaPrimaField.disabled = true;
+    }
+    {% endif %}
+});
+</script>
+{% endblock %}

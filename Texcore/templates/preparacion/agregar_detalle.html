@@ -1,0 +1,261 @@
+{% extends "paginas/base.html" %}
+
+{% block title %}Agregar Detalle - Preparación #{{ preparacion.id }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-microscope"></i> 
+                        Agregar Detalle Técnico - Preparación #{{ preparacion.id }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>{{ preparacion.materia_prima.tipo }}</strong> - {{ preparacion.get_tipo_proceso_display }}
+                        <br><small>Lote: {{ preparacion.materia_prima.lote }} | Cantidad: {{ preparacion.cantidad_procesada }} kg</small>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.temperatura.id_for_label }}">
+                                        <i class="fas fa-thermometer-half"></i> Temperatura (°C)
+                                    </label>
+                                    {{ form.temperatura }}
+                                    {% if form.temperatura.errors %}
+                                        <div class="text-danger">
+                                            {{ form.temperatura.errors }}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Rango típico: 20-100°C</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.humedad.id_for_label }}">
+                                        <i class="fas fa-tint"></i> Humedad (%)
+                                    </label>
+                                    {{ form.humedad }}
+                                    {% if form.humedad.errors %}
+                                        <div class="text-danger">
+                                            {{ form.humedad.errors }}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Porcentaje de humedad relativa</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.tiempo_proceso.id_for_label }}">
+                                        <i class="fas fa-clock"></i> Tiempo de Proceso (minutos)
+                                    </label>
+                                    {{ form.tiempo_proceso }}
+                                    {% if form.tiempo_proceso.errors %}
+                                        <div class="text-danger">
+                                            {{ form.tiempo_proceso.errors }}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Duración del proceso en minutos</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.equipo_utilizado.id_for_label }}">
+                                        <i class="fas fa-tools"></i> Equipo Utilizado
+                                    </label>
+                                    {{ form.equipo_utilizado }}
+                                    {% if form.equipo_utilizado.errors %}
+                                        <div class="text-danger">
+                                            {{ form.equipo_utilizado.errors }}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Máquina o equipo utilizado</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.notas_tecnicas.id_for_label }}">
+                                <i class="fas fa-clipboard-list"></i> Notas Técnicas
+                            </label>
+                            {{ form.notas_tecnicas }}
+                            {% if form.notas_tecnicas.errors %}
+                                <div class="text-danger">
+                                    {{ form.notas_tecnicas.errors }}
+                                </div>
+                            {% endif %}
+                            <small class="text-muted">Observaciones técnicas del proceso, ajustes realizados, etc.</small>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-success btn-block">
+                                    <i class="fas fa-save"></i> Guardar Detalle
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{% url 'detalle_preparacion' preparacion.id %}" class="btn btn-secondary btn-block">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Detalles existentes -->
+            {% if detalles_existentes %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list"></i> 
+                        Detalles Registrados ({{ detalles_existentes|length }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for detalle in detalles_existentes %}
+                    <div class="border rounded p-3 mb-2">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <small class="text-muted">Temperatura</small><br>
+                                <strong>{% if detalle.temperatura %}{{ detalle.temperatura }}°C{% else %}N/A{% endif %}</strong>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted">Humedad</small><br>
+                                <strong>{% if detalle.humedad %}{{ detalle.humedad }}%{% else %}N/A{% endif %}</strong>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted">Tiempo</small><br>
+                                <strong>{% if detalle.tiempo_proceso %}{{ detalle.tiempo_proceso }} min{% else %}N/A{% endif %}</strong>
+                            </div>
+                            <div class="col-md-3">
+                                <small class="text-muted">Equipo</small><br>
+                                <strong>{{ detalle.equipo_utilizado|default:"N/A" }}</strong>
+                            </div>
+                        </div>
+                        {% if detalle.notas_tecnicas %}
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <small class="text-muted">Notas:</small>
+                                <p class="mb-0">{{ detalle.notas_tecnicas }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <small class="text-muted float-right">{{ detalle.fecha_registro|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Guía de valores típicos -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info"></i> 
+                        Guía de Valores Típicos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Lavado:</h6>
+                            <ul class="small">
+                                <li>Temperatura: 30-60°C</li>
+                                <li>Tiempo: 15-45 min</li>
+                                <li>Humedad: 80-95%</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Secado:</h6>
+                            <ul class="small">
+                                <li>Temperatura: 60-80°C</li>
+                                <li>Tiempo: 60-120 min</li>
+                                <li>Humedad: 10-20%</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Cardado:</h6>
+                            <ul class="small">
+                                <li>Temperatura: 20-30°C</li>
+                                <li>Tiempo: 10-30 min</li>
+                                <li>Humedad: 60-70%</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Mezcla:</h6>
+                            <ul class="small">
+                                <li>Temperatura: 20-25°C</li>
+                                <li>Tiempo: 20-60 min</li>
+                                <li>Humedad: 65-75%</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-sugerencias basadas en el tipo de proceso
+    const tipoProcesoSuggestions = {
+        'lavado': {
+            temperatura: 45,
+            humedad: 85,
+            tiempo_proceso: 30
+        },
+        'secado': {
+            temperatura: 70,
+            humedad: 15,
+            tiempo_proceso: 90
+        },
+        'cardado': {
+            temperatura: 25,
+            humedad: 65,
+            tiempo_proceso: 20
+        },
+        'mezcla': {
+            temperatura: 22,
+            humedad: 70,
+            tiempo_proceso: 40
+        }
+    };
+
+    // Si hay sugerencias para el tipo de proceso actual
+    const tipoProcesoText = '{{ preparacion.tipo_proceso }}';
+    if (tipoProcesoSuggestions[tipoProcesoText]) {
+        const suggestions = tipoProcesoSuggestions[tipoProcesoText];
+        
+        // Solo llenar si los campos están vacíos
+        const tempField = document.getElementById('id_temperatura');
+        const humField = document.getElementById('id_humedad');
+        const timeField = document.getElementById('id_tiempo_proceso');
+        
+        if (tempField && !tempField.value) {
+            tempField.placeholder = `Sugerido: ${suggestions.temperatura}°C`;
+        }
+        if (humField && !humField.value) {
+            humField.placeholder = `Sugerido: ${suggestions.humedad}%`;
+        }
+        if (timeField && !timeField.value) {
+            timeField.placeholder = `Sugerido: ${suggestions.tiempo_proceso} min`;
+        }
+    }
+});
+</script>
+{% endblock %}
