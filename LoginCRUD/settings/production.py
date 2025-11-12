@@ -37,6 +37,17 @@ X_FRAME_OPTIONS = 'DENY'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Additional static files directories
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'Texcore', 'static'),
+]
+
+# Static files finders
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
 # Add WhiteNoise for static file serving
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -51,7 +62,7 @@ MIDDLEWARE = [
 
 # WhiteNoise configuration
 WHITENOISE_USE_FINDERS = True
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Logging configuration
 LOGGING = {

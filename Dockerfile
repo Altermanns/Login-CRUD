@@ -22,8 +22,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . /app/
 
-# Create necessary directories
-RUN mkdir -p /app/staticfiles /app/Texcore/static/css /app/Texcore/static/js
+# Create necessary directories with correct permissions
+RUN mkdir -p /app/staticfiles \
+    /app/Texcore/static/css \
+    /app/Texcore/static/js \
+    /app/staticfiles/admin \
+    /app/staticfiles/css \
+    /app/staticfiles/js
 
 # Backup existing database if it exists
 RUN if [ -f "/app/db.sqlite3" ]; then \
@@ -39,7 +44,7 @@ RUN chmod 664 /app/db.sqlite3 2>/dev/null || touch /app/db.sqlite3 && chmod 664 
 # Don't run migrations here - let entrypoint handle it to preserve data
 # RUN python manage.py migrate --noinput --settings=LoginCRUD.settings.production
 
-# Collect static files
+# Collect static files without clearing existing ones
 RUN python manage.py collectstatic --noinput --settings=LoginCRUD.settings.production
 
 # Create non-root user and change ownership

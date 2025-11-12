@@ -38,9 +38,17 @@ python manage.py migrate --noinput || {
 
 # Collect static files with error handling
 echo "📁 Collecting static files..."
-python manage.py collectstatic --noinput --clear || {
-    echo "❌ Static file collection failed"
-    exit 1
+# Create staticfiles directory if it doesn't exist
+mkdir -p /app/staticfiles
+# Collect without clearing to avoid permission issues
+python manage.py collectstatic --noinput --verbosity=1 || {
+    echo "❌ Static file collection failed, trying without compression..."
+    # Fallback: try without whitenoise compression
+    STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage' \
+    python manage.py collectstatic --noinput --verbosity=1 || {
+        echo "❌ Static file collection failed completely"
+        exit 1
+    }
 }
 
 # Create default users with better error handling
