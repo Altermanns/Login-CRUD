@@ -126,12 +126,20 @@ def crear_materia(request):
     """
     if request.method == 'POST':
         form = MateriaForm(request.POST)
+        
         if form.is_valid():
             materia = form.save(commit=False)
             materia.usuario_registro = request.user
-            materia.save()
-            messages.success(request, 'Materia creada correctamente.')
-            return redirect('index_materia')
+            
+            try:
+                materia.save()
+                messages.success(request, 'Materia creada correctamente.')
+                return redirect('index_materia')
+            except Exception as e:
+                messages.error(request, f'Error al guardar: {e}')
+        else:
+            for field, errors in form.errors.items():
+                messages.error(request, f'{field}: {errors}')
     else:
         form = MateriaForm()
     return render(request, 'libros/crear.html', {'form': form})

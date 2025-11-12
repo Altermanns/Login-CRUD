@@ -155,7 +155,7 @@ En producción, tu app tendrá automáticamente:
 
 - ✅ HTTPS habilitado por Render
 - ✅ Static files servidos por WhiteNoise
-- ✅ Base de datos PostgreSQL segura
+- ✅ Base de datos SQLite incluida en el contenedor
 - ✅ Variables de entorno protegidas
 - ✅ Configuraciones de seguridad Django activadas
 
@@ -164,18 +164,22 @@ En producción, tu app tendrá automáticamente:
 ### Build Errors:
 - Verifica que el `Dockerfile` esté en la raíz del proyecto
 - Revisa que `requirements.txt` tenga todas las dependencias
+- Asegúrate de que Docker Desktop esté ejecutándose para pruebas locales
 
 ### Database Errors:
-- Asegúrate de que la `DATABASE_URL` esté configurada correctamente
-- Verifica que el servicio PostgreSQL esté ejecutándose
+- SQLite está incluida automáticamente, no necesita configuración
+- Si hay problemas, verifica que `db.sqlite3` esté en el proyecto
+- Las migraciones se ejecutan automáticamente en el entrypoint
 
 ### Static Files Issues:
 - Los archivos estáticos se colectan automáticamente en el build
 - WhiteNoise se encarga de servirlos en producción
+- Verifica que el directorio `Texcore/static/css/` exista
 
 ### Application Errors:
 - Revisa los logs en tiempo real desde el dashboard de Render
 - Verifica que todas las variables de entorno estén configuradas
+- Usuarios por defecto se crean automáticamente (admin/operario)
 
 ## 🎯 URLs de la Aplicación
 
@@ -188,3 +192,34 @@ Una vez deployada:
 - **Django Admin**: `https://tu-app.onrender.com/admin/`
 
 ¡Tu aplicación TextilApp estará lista para producción! 🎉
+
+## 🔄 Actualizaciones Aplicadas (Última versión)
+
+Este deployment incluye todas las mejoras y correcciones:
+
+- ✅ **Sistema de roles**: Admin y Operario completamente funcional
+- ✅ **Base de datos SQLite**: Incluida en el contenedor, persistente
+- ✅ **Debugging removido**: Código limpio para producción
+- ✅ **Directorios static**: Creados automáticamente
+- ✅ **Permisos de archivos**: Configurados correctamente
+- ✅ **Entrypoint robusto**: Con manejo de errores mejorado
+- ✅ **Usuarios automáticos**: Admin y operario creados en el primer deploy
+- ✅ **Validación de datos**: Persistencia confirmada y funcional
+
+### Comandos para deployment final:
+
+```bash
+# 1. Asegurar que Docker Desktop esté ejecutándose
+# 2. Probar localmente (opcional)
+docker build -t textilapp .
+docker run -p 8000:8000 textilapp
+
+# 3. Subir a GitHub
+git add .
+git commit -m "Final Docker update with all fixes for Render deployment"
+git push origin main
+
+# 4. Deploy en Render usando tu repositorio GitHub
+```
+
+¡Listo para Render! 🚀

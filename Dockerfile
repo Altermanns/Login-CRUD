@@ -22,8 +22,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . /app/
 
-# Create staticfiles directory
-RUN mkdir -p /app/staticfiles
+# Create necessary directories
+RUN mkdir -p /app/staticfiles /app/Texcore/static/css /app/Texcore/static/js
+
+# Ensure db.sqlite3 has correct permissions
+RUN chmod 664 /app/db.sqlite3 2>/dev/null || touch /app/db.sqlite3 && chmod 664 /app/db.sqlite3
 
 # Run migrations and collect static files
 RUN python manage.py migrate --noinput --settings=LoginCRUD.settings.production
