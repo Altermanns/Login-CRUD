@@ -12,9 +12,7 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        postgresql-client \
         build-essential \
-        libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -27,10 +25,11 @@ COPY . /app/
 # Create staticfiles directory
 RUN mkdir -p /app/staticfiles
 
-# Collect static files
+# Run migrations and collect static files
+RUN python manage.py migrate --noinput --settings=LoginCRUD.settings.production
 RUN python manage.py collectstatic --noinput --settings=LoginCRUD.settings.production
 
-# Create non-root user
+# Create non-root user and change ownership
 RUN adduser --disabled-password --gecos '' appuser && \
     chown -R appuser:appuser /app
 USER appuser

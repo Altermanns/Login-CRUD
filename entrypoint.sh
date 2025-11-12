@@ -3,44 +3,14 @@
 # Exit on any error
 set -e
 
-echo "Starting Django application..."
-
-# Wait for database to be ready
-echo "Waiting for database to be ready..."
-python << END
-import sys
-import time
-import psycopg2
-import os
-
-suggest_unrecoverable_after = 30
-start = time.time()
-
-while True:
-    try:
-        psycopg2.connect(
-            dbname=os.environ.get('PGDATABASE', 'postgres'),
-            user=os.environ.get('PGUSER', 'postgres'),
-            password=os.environ.get('PGPASSWORD', ''),
-            host=os.environ.get('PGHOST', 'localhost'),
-            port=os.environ.get('PGPORT', '5432'),
-        )
-        break
-    except psycopg2.OperationalError as error:
-        sys.stderr.write("Waiting for database to become available...\n")
-        if time.time() - start > suggest_unrecoverable_after:
-            sys.stderr.write("  This is taking longer than expected. The following exception may be indicative of an unrecoverable error: '{}'\n".format(error))
-    time.sleep(1)
-END
-
-echo "Database is ready!"
+echo "🚀 Starting Django application with SQLite..."
 
 # Run migrations
-echo "Applying database migrations..."
+echo "📋 Applying database migrations..."
 python manage.py migrate --noinput
 
 # Collect static files
-echo "Collecting static files..."
+echo "📁 Collecting static files..."
 python manage.py collectstatic --noinput
 
 # Create superuser if it doesn't exist

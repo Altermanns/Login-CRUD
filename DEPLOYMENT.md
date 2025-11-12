@@ -1,15 +1,15 @@
-# 🚀 Guía de Deployment en Render con Docker
+# 🚀 Guía de Deployment en Render con Docker y SQLite
 
-Este documento describe cómo deployar tu aplicación TextilApp Django en Render usando Docker.
+Este documento describe cómo deployar tu aplicación TextilApp Django en Render usando Docker y SQLite.
 
 ## 📋 Preparativos
 
 ### 1. Archivos de Configuración Creados
 
-- ✅ `Dockerfile` - Configuración de contenedor Docker
+- ✅ `Dockerfile` - Configuración de contenedor Docker con SQLite
 - ✅ `docker-compose.yml` - Para desarrollo local con Docker
-- ✅ `requirements.txt` - Dependencias de Python
-- ✅ `entrypoint.sh` - Script de inicialización
+- ✅ `requirements.txt` - Dependencias de Python (sin PostgreSQL)
+- ✅ `entrypoint.sh` - Script de inicialización simplificado
 - ✅ `.dockerignore` - Archivos a ignorar en el build
 - ✅ `LoginCRUD/settings/` - Configuraciones separadas por entorno
 
@@ -20,6 +20,12 @@ El sistema creará automáticamente estos usuarios en el primer deploy:
 - **Admin**: `admin` / `admin123`
 - **Operario**: `operario` / `operario123`
 
+### 3. Base de Datos
+
+- ✅ **SQLite** incluida en el contenedor Docker
+- ✅ **Persistente** - Los datos se mantienen con el contenedor
+- ✅ **Sin configuración externa** - Todo funciona automáticamente
+
 ## 🔧 Pasos para Deployment en Render
 
 ### Paso 1: Preparar el Repositorio
@@ -27,7 +33,7 @@ El sistema creará automáticamente estos usuarios en el primer deploy:
 1. **Subir código a GitHub**:
 ```bash
 git add .
-git commit -m "Add Docker configuration for Render deployment"
+git commit -m "Add Docker configuration with SQLite for Render deployment"
 git push origin main
 ```
 
@@ -46,29 +52,18 @@ git push origin main
 - **Branch**: `main`
 - **Runtime**: `Docker`
 
-**Build Command**: (Render lo detectará automáticamente del Dockerfile)
-```
-# Automático desde Dockerfile
-```
-
-**Start Command**: (Automático desde Dockerfile)
-```
-# Se ejecutará entrypoint.sh automáticamente
-```
-
-### Paso 4: Configurar Variables de Entorno
+### Paso 4: Configurar Variables de Entorno (Opcional)
 
 En la sección "Environment Variables":
 
-#### Variables Requeridas:
+#### Variables Básicas:
 ```bash
-# Django Settings
+# Django Settings (ya configuradas por defecto)
 DJANGO_SETTINGS_MODULE=LoginCRUD.settings.production
 DEBUG=False
-SECRET_KEY=tu-clave-secreta-super-segura-aqui
 
-# Base de datos (Render la proporcionará automáticamente)
-DATABASE_URL=postgresql://... # Render la configurará automáticamente
+# Secret key personalizada (opcional - tiene una por defecto)
+SECRET_KEY=tu-clave-secreta-super-segura-aqui
 
 # Usuarios por defecto (opcional - personaliza si quieres)
 ADMIN_USERNAME=admin
@@ -79,27 +74,14 @@ OPERARIO_PASSWORD=tu_operario_password
 OPERARIO_EMAIL=operario@tuempresa.com
 ```
 
-#### Variables Opcionales:
-```bash
-# Host específico (Render lo configurará automáticamente)
-RENDER_EXTERNAL_HOSTNAME=tu-app-name.onrender.com
-```
+### ⚠️ **¡NO necesitas configurar base de datos!**
+SQLite está incluida automáticamente en el contenedor.
 
-### Paso 5: Configurar Base de Datos PostgreSQL
-
-1. **En tu dashboard de Render, crea un nuevo "PostgreSQL"**
-2. **Configuración**:
-   - **Name**: `textilapp-db`
-   - **Database Name**: `textilapp`
-   - **User**: `textilapp_user`
-3. **Copia la "Internal Database URL"**
-4. **Pégala en la variable `DATABASE_URL` de tu Web Service**
-
-### Paso 6: Deploy
+### Paso 5: Deploy
 
 1. **Haz clic en "Create Web Service"**
 2. **Render comenzará el build automáticamente**
-3. **El proceso tomará unos 5-10 minutos**
+3. **El proceso tomará unos 5-7 minutos**
 
 ## 🔍 Verificación del Deploy
 
@@ -108,14 +90,13 @@ RENDER_EXTERNAL_HOSTNAME=tu-app-name.onrender.com
 En tu servicio web en Render, ve a "Logs" para verificar:
 
 ```
-✅ Starting Django application...
-✅ Database is ready!
+✅ Starting Django application with SQLite...
 ✅ Applying database migrations...
 ✅ Collecting static files...
 ✅ Creating default users...
 ✅ Superuser admin created successfully
 ✅ Demo operario operario created successfully
-✅ Starting Gunicorn...
+✅ Starting Gunicorn web server...
 ```
 
 ### 2. Probar la Aplicación
