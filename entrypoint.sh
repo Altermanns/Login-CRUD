@@ -110,7 +110,9 @@ echo "🎉 Initialization complete!"
 
 # Initialize sample data if database is empty
 echo "📊 Checking for sample data..."
-python init_data.py
+python init_data.py || {
+    echo "⚠️ Sample data initialization failed, but continuing deployment..."
+}
 
 # Start Gunicorn
 echo "Starting Gunicorn..."

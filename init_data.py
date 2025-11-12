@@ -18,63 +18,74 @@ from datetime import date, timedelta
 def create_sample_data():
     """Crea datos de muestra para la aplicación"""
     
-    # Verificar si ya hay datos
-    if Materia.objects.exists():
-        print("🔄 Ya existen datos en la base de datos, saltando inicialización...")
-        return
-    
-    print("📦 Creando datos de muestra...")
-    
-    # Obtener usuarios admin y operario
     try:
-        admin_user = User.objects.get(username='admin')
-        operario_user = User.objects.get(username='operario')
-    except User.DoesNotExist:
-        print("❌ Los usuarios admin/operario no existen. Ejecute la creación de usuarios primero.")
+        # Verificar si ya hay datos
+        if Materia.objects.exists():
+            print("🔄 Ya existen datos en la base de datos, saltando inicialización...")
+            return
+        
+        print("📦 Creando datos de muestra...")
+        
+        # Obtener usuarios admin y operario
+        try:
+            admin_user = User.objects.get(username='admin')
+            operario_user = User.objects.get(username='operario')
+        except User.DoesNotExist:
+            print("❌ Los usuarios admin/operario no existen. Ejecute la creación de usuarios primero.")
+            return
+        
+        # Datos de muestra para materias
+        materias_muestra = [
+            {
+                'tipo': 'ALGODON',
+                'cantidad': 150,
+                'unidad_medida': 'kg',
+                'lote': 'ALG-2024-001',
+                'usuario_registro': operario_user,
+                'fecha_ingreso': date.today() - timedelta(days=5)
+            },
+            {
+                'tipo': 'SEDA',
+                'cantidad': 75,
+                'unidad_medida': 'kg',
+                'lote': 'SED-2024-001',
+                'usuario_registro': operario_user,
+                'fecha_ingreso': date.today() - timedelta(days=3)
+            },
+            {
+                'tipo': 'LANA',
+                'cantidad': 200,
+                'unidad_medida': 'kg',
+                'lote': 'LAN-2024-001',
+                'usuario_registro': operario_user,
+                'fecha_ingreso': date.today() - timedelta(days=2)
+            },
+            {
+                'tipo': 'POLIESTER',
+                'cantidad': 300,
+                'unidad_medida': 'kg',
+                'lote': 'POL-2024-001',
+                'usuario_registro': operario_user,
+                'fecha_ingreso': date.today() - timedelta(days=1)
+            },
+        ]
+        
+        # Crear las materias de muestra
+        for materia_data in materias_muestra:
+            try:
+                materia = Materia.objects.create(**materia_data)
+                print(f"✅ Creada materia: {materia.tipo} - {materia.cantidad}{materia.unidad_medida} - Lote: {materia.lote}")
+            except Exception as e:
+                print(f"⚠️ Error creando materia {materia_data['tipo']}: {e}")
+                continue
+        
+        total_created = Materia.objects.count()
+        print(f"🎉 Se crearon {total_created} materias de muestra exitosamente!")
+        
+    except Exception as e:
+        print(f"❌ Error general en la inicialización de datos: {e}")
+        # No lanzar la excepción para que no falle el deploy
         return
-    
-    # Datos de muestra para materias
-    materias_muestra = [
-        {
-            'tipo': 'ALGODON',
-            'cantidad': 150.5,
-            'proveedor': 'Textiles del Norte SA',
-            'observaciones': 'Algodón de primera calidad, fibra larga',
-            'usuario_registro': operario_user,
-            'fecha_ingreso': date.today() - timedelta(days=5)
-        },
-        {
-            'tipo': 'SEDA',
-            'cantidad': 75.0,
-            'proveedor': 'Sedas Finas Ltda',
-            'observaciones': 'Seda natural importada, color blanco',
-            'usuario_registro': operario_user,
-            'fecha_ingreso': date.today() - timedelta(days=3)
-        },
-        {
-            'tipo': 'LANA',
-            'cantidad': 200.0,
-            'proveedor': 'Lanas Andinas',
-            'observaciones': 'Lana merino de alta calidad',
-            'usuario_registro': operario_user,
-            'fecha_ingreso': date.today() - timedelta(days=2)
-        },
-        {
-            'tipo': 'POLIESTER',
-            'cantidad': 300.0,
-            'proveedor': 'Sintéticos Modernos SA',
-            'observaciones': 'Poliéster reciclado, certificado eco-friendly',
-            'usuario_registro': operario_user,
-            'fecha_ingreso': date.today() - timedelta(days=1)
-        },
-    ]
-    
-    # Crear las materias de muestra
-    for materia_data in materias_muestra:
-        materia = Materia.objects.create(**materia_data)
-        print(f"✅ Creada materia: {materia.tipo} - {materia.cantidad}kg")
-    
-    print(f"🎉 Se crearon {len(materias_muestra)} materias de muestra exitosamente!")
 
 if __name__ == '__main__':
     create_sample_data()
