@@ -642,35 +642,58 @@ def eliminar_preparacion(request, preparacion_id):
 @admin_or_preparador_required
 def reporte_preparaciones(request):
     """Generar reporte de preparaciones."""
+    # Filtros de fecha
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+    estado_filtro = request.GET.get('estado')
+    
+    # QuerySet base
+    preparaciones = PreparacionMateria.objects.select_related(
+        'materia_prima', 'usuario_preparador'
+    ).order_by('-fecha_inicio')
+    
+    # Aplicar filtros
+    if fecha_inicio:
+        preparaciones = preparaciones.filter(fecha_inicio__date__gte=fecha_inicio)
+    
+    if fecha_fin:
+        preparaciones = preparaciones.filter(fecha_inicio__date__lte=fecha_fin)
+    
+    if estado_filtro:
+        preparaciones = preparaciones.filter(estado=estado_filtro)
+    
     # Estadísticas generales
-    total_preparaciones = PreparacionMateria.objects.count()
-    completadas = PreparacionMateria.objects.filter(estado='completada').count()
-    en_proceso = PreparacionMateria.objects.filter(estado='en_proceso').count()
-    pendientes = PreparacionMateria.objects.filter(estado='pendiente').count()
+    total_preparaciones = preparaciones.count()
+    preparaciones_completadas = preparaciones.filter(estado='completada').count()
+    preparaciones_en_proceso = preparaciones.filter(estado='en_proceso').count()
+    preparaciones_pendientes = preparaciones.filter(estado='pendiente').count()
     
-    # Preparaciones por tipo de proceso
-    por_tipo_proceso = PreparacionMateria.objects.values(
-        'tipo_proceso'
-    ).annotate(
-        total=Count('id'),
-        completadas=Count('id', filter=Q(estado='completada'))
-    ).order_by('-total')
+    # Cantidad total procesada
+    total_cantidad_procesada = preparaciones.filter(
+        estado='completada'
+    ).aggregate(total=Sum('cantidad_procesada'))['total'] or 0
     
-    # Preparadores más activos
-    preparadores_activos = User.objects.filter(
-        preparacionmateria__isnull=False
+    # Resumen por tipo de material
+    resumen_por_material = preparaciones.values(
+        'materia_prima__tipo'
     ).annotate(
-        total_preparaciones=Count('preparacionmateria'),
-        completadas=Count('preparacionmateria', filter=Q(preparacionmateria__estado='completada'))
-    ).order_by('-total_preparaciones')
+        total_preparaciones=Count('id'),
+        cantidad_total=Sum('cantidad_procesada')
+    ).order_by('-cantidad_total')
+    
+    # Calcular porcentajes para el gráfico
+    max_cantidad = resumen_por_material.first()['cantidad_total'] if resumen_por_material else 1
+    for material in resumen_por_material:
+        material['porcentaje'] = (material['cantidad_total'] / max_cantidad * 100) if max_cantidad else 0
     
     context = {
+        'preparaciones': preparaciones,
         'total_preparaciones': total_preparaciones,
-        'completadas': completadas,
-        'en_proceso': en_proceso,
-        'pendientes': pendientes,
-        'por_tipo_proceso': por_tipo_proceso,
-        'preparadores_activos': preparadores_activos,
+        'preparaciones_completadas': preparaciones_completadas,
+        'preparaciones_en_proceso': preparaciones_en_proceso,
+        'preparaciones_pendientes': preparaciones_pendientes,
+        'total_cantidad_procesada': total_cantidad_procesada,
+        'resumen_por_material': resumen_por_material,
     }
     
     return render(request, 'preparacion/reporte.html', context)

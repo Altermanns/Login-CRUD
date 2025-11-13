@@ -1,0 +1,250 @@
+{% extends "paginas/base.html" %}
+
+{% block title %}Reporte de Preparaciones{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-chart-bar"></i> 
+                        Reporte de Preparaciones
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Filtros de Reporte -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <form method="GET" class="form-inline">
+                                <div class="form-group mr-3">
+                                    <label for="fecha_inicio" class="mr-2">Desde:</label>
+                                    <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" 
+                                           value="{{ request.GET.fecha_inicio }}">
+                                </div>
+                                <div class="form-group mr-3">
+                                    <label for="fecha_fin" class="mr-2">Hasta:</label>
+                                    <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" 
+                                           value="{{ request.GET.fecha_fin }}">
+                                </div>
+                                <div class="form-group mr-3">
+                                    <label for="estado" class="mr-2">Estado:</label>
+                                    <select id="estado" name="estado" class="form-control">
+                                        <option value="">Todos</option>
+                                        <option value="pendiente" {% if request.GET.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                                        <option value="en_proceso" {% if request.GET.estado == 'en_proceso' %}selected{% endif %}>En Proceso</option>
+                                        <option value="completada" {% if request.GET.estado == 'completada' %}selected{% endif %}>Completada</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-filter"></i> Filtrar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Estadísticas Resumidas -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <h3>{{ total_preparaciones|default:0 }}</h3>
+                                    <small>Total Preparaciones</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h3>{{ preparaciones_completadas|default:0 }}</h3>
+                                    <small>Completadas</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <h3>{{ total_cantidad_procesada|default:0|floatformat:1 }}</h3>
+                                    <small>Kg Procesados</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body text-center">
+                                    <h3>{{ preparaciones_pendientes|default:0 }}</h3>
+                                    <small>Pendientes</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de Preparaciones -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="mb-3">
+                                <i class="fas fa-list"></i> Detalle de Preparaciones
+                                <button class="btn btn-sm btn-outline-success float-right" onclick="exportarExcel()">
+                                    <i class="fas fa-file-excel"></i> Exportar Excel
+                                </button>
+                            </h5>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover" id="tablaReporte">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Materia Prima</th>
+                                            <th>Lote</th>
+                                            <th>Proceso</th>
+                                            <th>Cantidad (kg)</th>
+                                            <th>Preparador</th>
+                                            <th>Estado</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Fecha Completado</th>
+                                            <th>Calidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if preparaciones %}
+                                            {% for prep in preparaciones %}
+                                            <tr>
+                                                <td>
+                                                    <a href="{% url 'detalle_preparacion' prep.id %}" class="btn btn-sm btn-outline-primary">
+                                                        #{{ prep.id }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ prep.materia_prima.tipo }}</td>
+                                                <td>{{ prep.materia_prima.lote }}</td>
+                                                <td>{{ prep.get_tipo_proceso_display }}</td>
+                                                <td>{{ prep.cantidad_procesada }}</td>
+                                                <td>{{ prep.usuario_preparador.first_name }} {{ prep.usuario_preparador.last_name }}</td>
+                                                <td>
+                                                    <span class="badge 
+                                                        {% if prep.estado == 'pendiente' %}badge-warning
+                                                        {% elif prep.estado == 'en_proceso' %}badge-info
+                                                        {% elif prep.estado == 'completada' %}badge-success
+                                                        {% else %}badge-danger{% endif %}">
+                                                        {{ prep.get_estado_display }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ prep.fecha_inicio|date:"d/m/Y H:i" }}</td>
+                                                <td>
+                                                    {% if prep.fecha_completado %}
+                                                        {{ prep.fecha_completado|date:"d/m/Y H:i" }}
+                                                    {% else %}
+                                                        <span class="text-muted">-</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if prep.calidad_resultado %}
+                                                        <span class="badge 
+                                                            {% if prep.calidad_resultado == 'excelente' %}badge-success
+                                                            {% elif prep.calidad_resultado == 'buena' %}badge-info
+                                                            {% elif prep.calidad_resultado == 'regular' %}badge-warning
+                                                            {% else %}badge-danger{% endif %}">
+                                                            {{ prep.get_calidad_resultado_display }}
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="text-muted">No evaluada</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="10" class="text-center text-muted">
+                                                    No hay preparaciones que coincidan con los filtros aplicados.
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen por Material -->
+                    {% if resumen_por_material %}
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="mb-3">
+                                <i class="fas fa-chart-pie"></i> Resumen por Tipo de Material
+                            </h5>
+                            <div class="row">
+                                {% for material in resumen_por_material %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ material.materia_prima__tipo }}</h6>
+                                            <p class="card-text">
+                                                <strong>{{ material.total_preparaciones }}</strong> preparaciones<br>
+                                                <strong>{{ material.cantidad_total|floatformat:1 }}</strong> kg procesados
+                                            </p>
+                                            <div class="progress" style="height: 10px;">
+                                                <div class="progress-bar bg-info" role="progressbar" 
+                                                     style="width: {{ material.porcentaje }}%"
+                                                     aria-valuenow="{{ material.porcentaje }}" 
+                                                     aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Botones de Acción -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <a href="{% url 'listar_preparaciones' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver a Lista
+                            </a>
+                            <button class="btn btn-info" onclick="window.print()">
+                                <i class="fas fa-print"></i> Imprimir Reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Función para exportar a Excel (simulado)
+function exportarExcel() {
+    // Aquí podrías implementar la exportación real
+    alert('Funcionalidad de exportación a Excel - Por implementar');
+}
+
+// Auto-llenar fecha de hoy si no hay filtros
+document.addEventListener('DOMContentLoaded', function() {
+    const fechaInicio = document.getElementById('fecha_inicio');
+    const fechaFin = document.getElementById('fecha_fin');
+    
+    if (!fechaInicio.value) {
+        const hoy = new Date();
+        const hace30Dias = new Date(hoy.getTime() - (30 * 24 * 60 * 60 * 1000));
+        fechaInicio.value = hace30Dias.toISOString().split('T')[0];
+        fechaFin.value = hoy.toISOString().split('T')[0];
+    }
+});
+</script>
+
+<style>
+@media print {
+    .btn, .form-group, .card-header {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+{% endblock %}

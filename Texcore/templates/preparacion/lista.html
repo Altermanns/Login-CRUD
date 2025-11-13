@@ -11,11 +11,16 @@
                     <h3 class="card-title mb-0">
                         <i class="fas fa-industry"></i> Preparaciones de Materias Primas
                     </h3>
-                    {% if user.profile.is_preparador %}
-                    <a href="{% url 'crear_preparacion' %}" class="btn btn-success">
-                        <i class="fas fa-plus"></i> Nueva Preparación
-                    </a>
-                    {% endif %}
+                    <div>
+                        <a href="{% url 'reporte_preparaciones' %}" class="btn btn-info mr-2">
+                            <i class="fas fa-chart-bar"></i> Reporte
+                        </a>
+                        {% if user.profile.is_preparador %}
+                        <a href="{% url 'crear_preparacion' %}" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Nueva Preparación
+                        </a>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="card-body">
                     <!-- Filtros -->
