@@ -22,7 +22,7 @@
                                     <label for="id_materia_prima" class="form-label">
                                         <i class="fas fa-cube"></i> Materia Prima *
                                     </label>
-                                    {{ form.materia_prima }}
+                                    {{ form.materia_prima.as_widget(attrs={'class': 'form-control', 'style': 'border-radius: 8px;'}) }}
                                     <small class="form-text text-muted">
                                         Selecciona la materia prima a procesar
                                     </small>
@@ -34,7 +34,7 @@
                                     <label for="id_tipo_proceso" class="form-label">
                                         <i class="fas fa-cogs"></i> Tipo de Proceso *
                                     </label>
-                                    {{ form.tipo_proceso }}
+                                    {{ form.tipo_proceso.as_widget(attrs={'class': 'form-control', 'style': 'border-radius: 8px;'}) }}
                                 </div>
                             </div>
                         </div>
@@ -45,7 +45,7 @@
                                     <label for="id_cantidad_procesada" class="form-label">
                                         <i class="fas fa-weight-hanging"></i> Cantidad a Procesar (kg) *
                                     </label>
-                                    {{ form.cantidad_procesada }}
+                                    {{ form.cantidad_procesada.as_widget(attrs={'class': 'form-control', 'style': 'border-radius: 8px;'}) }}
                                 </div>
                             </div>
                             
@@ -54,7 +54,7 @@
                                     <label for="id_porcentaje_mezcla" class="form-label">
                                         <i class="fas fa-percentage"></i> Porcentaje en Mezcla (%)
                                     </label>
-                                    {{ form.porcentaje_mezcla }}
+                                    {{ form.porcentaje_mezcla.as_widget(attrs={'class': 'form-control', 'style': 'border-radius: 8px;'}) }}
                                     <small class="form-text text-muted">
                                         Opcional: Porcentaje en la mezcla final
                                     </small>
@@ -66,14 +66,14 @@
                             <label for="id_observaciones" class="form-label">
                                 <i class="fas fa-clipboard-list"></i> Observaciones
                             </label>
-                            {{ form.observaciones }}
+                            {{ form.observaciones.as_widget(attrs={'class': 'form-control', 'style': 'border-radius: 8px;'}) }}
                         </div>
 
                         <div class="form-group mb-3">
                             <label for="id_calidad_resultado" class="form-label">
                                 <i class="fas fa-star"></i> Calidad Esperada
                             </label>
-                            {{ form.calidad_resultado }}
+                            {{ form.calidad_resultado.as_widget(attrs={'class': 'form-control', 'style': 'border-radius: 8px;'}) }}
                             <small class="form-text text-muted">
                                 Opcional: Puedes definir esto después del proceso
                             </small>

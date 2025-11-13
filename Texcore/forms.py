@@ -35,12 +35,12 @@ class PreparacionMateriaForm(forms.ModelForm):
                   'porcentaje_mezcla', 'observaciones', 'calidad_resultado']
         widgets = {
             'materia_prima': forms.Select(attrs={
-                'class': 'form-control',
-                'required': True
+                'required': True,
+                'style': 'border-radius: 8px;'
             }),
             'tipo_proceso': forms.Select(attrs={
-                'class': 'form-control',
-                'required': True
+                'required': True,
+                'style': 'border-radius: 8px;'
             }),
             'cantidad_procesada': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -60,9 +60,7 @@ class PreparacionMateriaForm(forms.ModelForm):
                 'rows': 3,
                 'placeholder': 'Observaciones del proceso de preparación...'
             }),
-            'calidad_resultado': forms.Select(attrs={
-                'class': 'form-control'
-            }),
+            'calidad_resultado': forms.Select(attrs={'style': 'border-radius: 8px;'}),
         }
     
     def __init__(self, *args, **kwargs):
@@ -174,13 +172,19 @@ class FiltroPreparacionForm(forms.Form):
     estado = forms.ChoiceField(
         choices=[('', 'Todos los estados')] + PreparacionMateria.ESTADO_CHOICES,
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    
+    estado = forms.ChoiceField(
+        choices=[('', 'Todos los estados')] + PreparacionMateria.ESTADO_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'style': 'border-radius: 8px;'})
     )
     
     tipo_proceso = forms.ChoiceField(
         choices=[('', 'Todos los procesos')] + PreparacionMateria.TIPO_PROCESO_CHOICES,
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'style': 'border-radius: 8px;'})
     )
     
     fecha_desde = forms.DateField(

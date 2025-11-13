@@ -30,7 +30,7 @@
                                     <label for="{{ form.materia_prima.id_for_label }}">
                                         <i class="fas fa-cube"></i> Materia Prima
                                     </label>
-                                    {{ form.materia_prima }}
+                                    {{ form.materia_prima.as_widget(attrs={'style': 'border-radius: 8px;'}) }}
                                     {% if form.materia_prima.errors %}
                                         <div class="text-danger">
                                             {{ form.materia_prima.errors }}
@@ -46,7 +46,7 @@
                                     <label for="{{ form.tipo_proceso.id_for_label }}">
                                         <i class="fas fa-cog"></i> Tipo de Proceso
                                     </label>
-                                    {{ form.tipo_proceso }}
+                                    {{ form.tipo_proceso.as_widget(attrs={'style': 'border-radius: 8px;'}) }}
                                     {% if form.tipo_proceso.errors %}
                                         <div class="text-danger">
                                             {{ form.tipo_proceso.errors }}
@@ -62,7 +62,7 @@
                                     <label for="{{ form.cantidad_procesada.id_for_label }}">
                                         <i class="fas fa-weight-hanging"></i> Cantidad a Procesar (kg)
                                     </label>
-                                    {{ form.cantidad_procesada }}
+                                    {{ form.cantidad_procesada.as_widget(attrs={'style': 'border-radius: 8px;'}) }}
                                     {% if form.cantidad_procesada.errors %}
                                         <div class="text-danger">
                                             {{ form.cantidad_procesada.errors }}
@@ -75,7 +75,7 @@
                                     <label for="{{ form.porcentaje_mezcla.id_for_label }}">
                                         <i class="fas fa-percentage"></i> Porcentaje de Mezcla (%)
                                     </label>
-                                    {{ form.porcentaje_mezcla }}
+                                    {{ form.porcentaje_mezcla.as_widget(attrs={'style': 'border-radius: 8px;'}) }}
                                     {% if form.porcentaje_mezcla.errors %}
                                         <div class="text-danger">
                                             {{ form.porcentaje_mezcla.errors }}
@@ -93,7 +93,7 @@
                                     <label for="{{ form.calidad_resultado.id_for_label }}">
                                         <i class="fas fa-star"></i> Calidad del Resultado
                                     </label>
-                                    {{ form.calidad_resultado }}
+                                    {{ form.calidad_resultado.as_widget(attrs={'style': 'border-radius: 8px;'}) }}
                                     {% if form.calidad_resultado.errors %}
                                         <div class="text-danger">
                                             {{ form.calidad_resultado.errors }}
@@ -108,7 +108,7 @@
                             <label for="{{ form.observaciones.id_for_label }}">
                                 <i class="fas fa-clipboard"></i> Observaciones
                             </label>
-                            {{ form.observaciones }}
+                            {{ form.observaciones.as_widget(attrs={'style': 'border-radius: 8px;'}) }}
                             {% if form.observaciones.errors %}
                                 <div class="text-danger">
                                     {{ form.observaciones.errors }}

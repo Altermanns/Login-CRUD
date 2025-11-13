@@ -17,7 +17,7 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.user.username} - {self.get_role_display()}"
+        return f"{self.user.username} ({self.get_role_display()})"
     
     @property
     def is_admin(self):
@@ -58,8 +58,14 @@ class Materia(models.Model):
                                         help_text="Usuario que registró esta materia prima")
 
     def __str__(self):
-        """Return a human-friendly representation: prefer tipo and lote."""
-        return f"{self.tipo} - {self.lote}" if self.tipo else f"{self.lote}"
+        """Return a more descriptive and robust string representation."""
+        if self.tipo and self.lote:
+            return f"{self.tipo} (Lote: {self.lote})"
+        if self.tipo:
+            return self.tipo
+        if self.lote:
+            return f"Lote: {self.lote}"
+        return f"Materia ID: {self.id}"
 
 
 class PreparacionMateria(models.Model):
@@ -116,7 +122,7 @@ class PreparacionMateria(models.Model):
         verbose_name_plural = 'Preparaciones de Materias'
     
     def __str__(self):
-        return f"{self.get_tipo_proceso_display()} - {self.materia_prima.tipo} ({self.get_estado_display()})"
+        return f"{self.get_tipo_proceso_display()} de {self.materia_prima} ({self.get_estado_display()})"
     
     @property
     def duracion_proceso(self):
@@ -170,5 +176,5 @@ class DetallePreparacion(models.Model):
         verbose_name_plural = 'Detalles de Preparación'
     
     def __str__(self):
-        return f"Detalle - {self.preparacion}"
+        return f"Detalle de {self.preparacion}"
 
