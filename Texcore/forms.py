@@ -35,10 +35,12 @@ class PreparacionMateriaForm(forms.ModelForm):
                   'porcentaje_mezcla', 'observaciones', 'calidad_resultado']
         widgets = {
             'materia_prima': forms.Select(attrs={
+                'class': 'form-control',
                 'required': True,
                 'style': 'border-radius: 8px;'
             }),
             'tipo_proceso': forms.Select(attrs={
+                'class': 'form-control',
                 'required': True,
                 'style': 'border-radius: 8px;'
             }),
@@ -46,21 +48,27 @@ class PreparacionMateriaForm(forms.ModelForm):
                 'class': 'form-control',
                 'min': 0,
                 'step': '0.01',
-                'placeholder': 'Cantidad en kg'
+                'placeholder': 'Cantidad en kg',
+                'style': 'border-radius: 8px;'
             }),
             'porcentaje_mezcla': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'min': 0,
                 'max': 100,
                 'step': '0.01',
-                'placeholder': 'Porcentaje (%)'
+                'placeholder': 'Porcentaje (%)',
+                'style': 'border-radius: 8px;'
             }),
             'observaciones': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'Observaciones del proceso de preparación...'
+                'placeholder': 'Observaciones del proceso de preparación...',
+                'style': 'border-radius: 8px;'
             }),
-            'calidad_resultado': forms.Select(attrs={'style': 'border-radius: 8px;'}),
+            'calidad_resultado': forms.Select(attrs={
+                'class': 'form-control',
+                'style': 'border-radius: 8px;'
+            }),
         }
     
     def __init__(self, *args, **kwargs):
