@@ -60,7 +60,7 @@ table.table tbody tr:hover{ background: rgba(37,99,235,0.04) }
 
 .form-card{ max-width:720px; margin:0 auto }
 
-.form-control{ border-radius:8px; padding:0.9rem 0.8rem }
+.form-control{ border-radius:8px; padding:0.9rem 0.8rem; line-height: 1.5; }
 .form-label{ font-weight:600; color:#0f172a }
 
 .btn-primary{ background:var(--brand); border-color:var(--brand); padding:0.6rem 1.1rem; border-radius:8px }
@@ -129,4 +129,24 @@ table.table tbody td{ vertical-align:middle }
 
 @media (max-width: 767px){
   .form-card .form-row{ grid-template-columns: 1fr }
+}
+
+/* Fix dropdown menu z-index issue */
+.dropdown-menu {
+  z-index: 1040; /* Ensure it's above the sticky footer (1030) */
+}
+
+/* Fix for select dropdown text clipping */
+select.form-control {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+/* Styles moved from lista.html for global consistency */
+.badge {
+    font-size: 0.8rem;
+}
+.fas {
+    width: 16px;
+    text-align: center;
 }
