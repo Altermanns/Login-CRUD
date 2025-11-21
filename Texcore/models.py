@@ -30,8 +30,6 @@ class Profile(models.Model):
     @property
     def is_preparador(self):
         return self.role == 'preparador'
-    def is_operario(self):
-        return self.role == 'operario'
 
 
 @receiver(post_save, sender=User)
