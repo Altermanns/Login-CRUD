@@ -1,0 +1,184 @@
+{% extends "paginas/base.html" %}
+
+{% block title %}Agregar Detalle Técnico{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-clipboard-list"></i> Agregar Detalle Técnico - Proceso #{{ hilatura.id }}
+                    </h3>
+                    <p class="mb-0">
+                        <small>Etapa: <strong>{{ hilatura.get_etapa_display }}</strong></small>
+                    </p>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <h5 class="mb-3"><i class="fas fa-cog"></i> Parámetros Generales</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="maquina_hiladora">Máquina Hiladora</label>
+                                    <input type="text" name="maquina_hiladora" id="maquina_hiladora" 
+                                           class="form-control" placeholder="Nombre de la máquina">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="numero_husos">Número de Husos</label>
+                                    <input type="number" name="numero_husos" id="numero_husos" 
+                                           class="form-control" min="0" placeholder="Cantidad de husos">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="velocidad_maquina">Velocidad Máquina (m/min)</label>
+                                    <input type="number" name="velocidad_maquina" id="velocidad_maquina" 
+                                           class="form-control" step="0.01" placeholder="Ej: 150.5">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="temperatura">Temperatura (°C)</label>
+                                    <input type="number" name="temperatura" id="temperatura" 
+                                           class="form-control" step="0.01" placeholder="Ej: 25.5">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="humedad">Humedad (%)</label>
+                                    <input type="number" name="humedad" id="humedad" 
+                                           class="form-control" step="0.01" min="0" max="100" 
+                                           placeholder="Ej: 65.0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Parámetros específicos de Cardado -->
+                        {% if hilatura.etapa == 'cardado' %}
+                        <h5 class="mt-4 mb-3"><i class="fas fa-th"></i> Parámetros de Cardado</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="velocidad_cardado">Velocidad de Cardado (m/min)</label>
+                                    <input type="number" name="velocidad_cardado" id="velocidad_cardado" 
+                                           class="form-control" step="0.01" placeholder="Ej: 100.0">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="limpieza_fibras">Nivel de Limpieza de Fibras</label>
+                                    <select name="limpieza_fibras" id="limpieza_fibras" class="form-control">
+                                        <option value="">Seleccione...</option>
+                                        <option value="excelente">Excelente</option>
+                                        <option value="buena">Buena</option>
+                                        <option value="regular">Regular</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Parámetros específicos de Peinado -->
+                        {% if hilatura.etapa == 'peinado' %}
+                        <h5 class="mt-4 mb-3"><i class="fas fa-comb"></i> Parámetros de Peinado</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="longitud_fibra_eliminada">Longitud de Fibra Corta Eliminada (mm)</label>
+                                    <input type="number" name="longitud_fibra_eliminada" id="longitud_fibra_eliminada" 
+                                           class="form-control" step="0.01" placeholder="Ej: 15.5">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="porcentaje_impurezas_removidas">Impurezas Removidas (%)</label>
+                                    <input type="number" name="porcentaje_impurezas_removidas" id="porcentaje_impurezas_removidas" 
+                                           class="form-control" step="0.01" min="0" max="100" placeholder="Ej: 12.5">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Parámetros específicos de Hilado -->
+                        {% if hilatura.etapa == 'hilado' %}
+                        <h5 class="mt-4 mb-3"><i class="fas fa-spinner"></i> Parámetros de Hilado</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="grado_torsion">Grado de Torsión</label>
+                                    <select name="grado_torsion" id="grado_torsion" class="form-control">
+                                        <option value="">Seleccione...</option>
+                                        <option value="baja">Baja Torsión</option>
+                                        <option value="media">Media Torsión</option>
+                                        <option value="alta">Alta Torsión</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="uniformidad">Uniformidad del Hilo (%)</label>
+                                    <input type="number" name="uniformidad" id="uniformidad" 
+                                           class="form-control" step="0.01" min="0" max="100" 
+                                           placeholder="Ej: 95.0">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <h5 class="mt-4 mb-3"><i class="fas fa-notes-medical"></i> Control de Calidad</h5>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="tiempo_proceso">Tiempo de Proceso (minutos)</label>
+                                    <input type="number" name="tiempo_proceso" id="tiempo_proceso" 
+                                           class="form-control" min="0" placeholder="Ej: 120">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="defectos_encontrados">Defectos Encontrados</label>
+                                    <textarea name="defectos_encontrados" id="defectos_encontrados" 
+                                              class="form-control" rows="3" 
+                                              placeholder="Describa los defectos encontrados durante el proceso..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="notas_tecnicas">Notas Técnicas</label>
+                                    <textarea name="notas_tecnicas" id="notas_tecnicas" 
+                                              class="form-control" rows="4" 
+                                              placeholder="Notas técnicas adicionales del proceso..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Guardar Detalle
+                            </button>
+                            <a href="{% url 'detalle_hilatura' hilatura.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

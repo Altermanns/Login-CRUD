@@ -1,0 +1,335 @@
+{% extends "paginas/base.html" %}
+
+{% block title %}Detalle de Hilatura #{{ hilatura.id }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-spinner"></i> Detalle del Proceso de Hilatura #{{ hilatura.id }}
+                    </h3>
+                    <div>
+                        <a href="{% url 'listar_hilaturas' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Información general -->
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-info-circle"></i> Información General</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th width="40%">Etapa:</th>
+                                    <td>
+                                        {% if hilatura.etapa == 'cardado' %}
+                                        <span class="badge badge-info"><i class="fas fa-th"></i> Cardado</span>
+                                        {% elif hilatura.etapa == 'peinado' %}
+                                        <span class="badge badge-warning"><i class="fas fa-comb"></i> Peinado</span>
+                                        {% else %}
+                                        <span class="badge badge-success"><i class="fas fa-spinner"></i> Hilado</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Estado:</th>
+                                    <td>
+                                        {% if hilatura.estado == 'pendiente' %}
+                                        <span class="badge badge-secondary">Pendiente</span>
+                                        {% elif hilatura.estado == 'en_proceso' %}
+                                        <span class="badge badge-warning">En Proceso</span>
+                                        {% elif hilatura.estado == 'completada' %}
+                                        <span class="badge badge-success">Completada</span>
+                                        {% else %}
+                                        <span class="badge badge-danger">Rechazada</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Preparación Origen:</th>
+                                    <td>
+                                        {% if hilatura.preparacion_origen %}
+                                        <a href="{% url 'detalle_preparacion' hilatura.preparacion_origen.id %}">
+                                            {{ hilatura.preparacion_origen.materia_prima.tipo }} - 
+                                            {{ hilatura.preparacion_origen.get_tipo_proceso_display }}
+                                        </a>
+                                        {% else %}
+                                        <span class="text-muted">Sin preparación asociada</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Operador:</th>
+                                    <td>{{ hilatura.usuario_operador.get_full_name|default:hilatura.usuario_operador.username }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Fecha Inicio:</th>
+                                    <td>{{ hilatura.fecha_inicio|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                {% if hilatura.fecha_completado %}
+                                <tr>
+                                    <th>Fecha Completado:</th>
+                                    <td>{{ hilatura.fecha_completado|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Duración:</th>
+                                    <td>{{ hilatura.duracion_proceso }}</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+
+                        <!-- Datos del proceso -->
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-chart-line"></i> Datos del Proceso</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th width="40%">Fibra de Entrada:</th>
+                                    <td><strong>{{ hilatura.cantidad_fibra_entrada|floatformat:2 }} kg</strong></td>
+                                </tr>
+                                <tr>
+                                    <th>Hilo de Salida:</th>
+                                    <td>
+                                        {% if hilatura.cantidad_hilo_salida > 0 %}
+                                        <strong>{{ hilatura.cantidad_hilo_salida|floatformat:2 }} kg</strong>
+                                        {% else %}
+                                        <span class="text-muted">Aún no registrado</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Rendimiento:</th>
+                                    <td>
+                                        {% if hilatura.rendimiento_proceso > 0 %}
+                                        <span class="badge badge-info">{{ hilatura.rendimiento_proceso|floatformat:2 }}%</span>
+                                        {% else %}
+                                        <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Merma:</th>
+                                    <td>
+                                        {% if hilatura.merma > 0 %}
+                                        <span class="badge badge-warning">{{ hilatura.merma|floatformat:2 }}%</span>
+                                        {% else %}
+                                        <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Título del Hilo:</th>
+                                    <td>{{ hilatura.titulo_hilo|default:"-" }}</td>
+                                </tr>
+                                {% if hilatura.torsion %}
+                                <tr>
+                                    <th>Torsión:</th>
+                                    <td>{{ hilatura.torsion|floatformat:2 }} TPM</td>
+                                </tr>
+                                {% endif %}
+                                {% if hilatura.resistencia %}
+                                <tr>
+                                    <th>Resistencia:</th>
+                                    <td>{{ hilatura.resistencia|floatformat:2 }} cN/tex</td>
+                                </tr>
+                                {% endif %}
+                                {% if hilatura.calidad_resultado %}
+                                <tr>
+                                    <th>Calidad:</th>
+                                    <td>
+                                        <span class="badge badge-{% if hilatura.calidad_resultado == 'excelente' %}success{% elif hilatura.calidad_resultado == 'buena' %}info{% elif hilatura.calidad_resultado == 'regular' %}warning{% else %}danger{% endif %}">
+                                            {{ hilatura.get_calidad_resultado_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Observaciones -->
+                    {% if hilatura.observaciones %}
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <h5><i class="fas fa-comment"></i> Observaciones</h5>
+                            <div class="alert alert-secondary">
+                                {{ hilatura.observaciones }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Acciones -->
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <h5><i class="fas fa-cogs"></i> Acciones</h5>
+                            
+                            {% if user.profile.is_operario %}
+                                {% if hilatura.estado == 'pendiente' %}
+                                <form method="post" action="{% url 'iniciar_hilatura' hilatura.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-play"></i> Iniciar Proceso
+                                    </button>
+                                </form>
+                                <a href="{% url 'editar_hilatura' hilatura.id %}" class="btn btn-warning">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                {% elif hilatura.estado == 'en_proceso' %}
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#completarModal">
+                                    <i class="fas fa-check"></i> Completar Proceso
+                                </button>
+                                <a href="{% url 'agregar_detalle_hilatura' hilatura.id %}" class="btn btn-info">
+                                    <i class="fas fa-plus"></i> Agregar Detalle Técnico
+                                </a>
+                                {% endif %}
+                            {% endif %}
+
+                            {% if user.profile.is_admin and hilatura.estado in 'pendiente,rechazada' %}
+                            <form method="post" action="{% url 'eliminar_hilatura' hilatura.id %}" style="display: inline;" 
+                                  onsubmit="return confirm('¿Está seguro de eliminar este proceso?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Detalles técnicos -->
+                    {% if detalles %}
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h5><i class="fas fa-clipboard-list"></i> Detalles Técnicos</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Máquina</th>
+                                            <th>Velocidad</th>
+                                            <th>Temperatura</th>
+                                            <th>Humedad</th>
+                                            <th>Tiempo</th>
+                                            <th>Detalles</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for detalle in detalles %}
+                                        <tr>
+                                            <td>{{ detalle.maquina_hiladora|default:"-" }}</td>
+                                            <td>{{ detalle.velocidad_maquina|default:"-" }} m/min</td>
+                                            <td>{{ detalle.temperatura|default:"-" }} °C</td>
+                                            <td>{{ detalle.humedad|default:"-" }}%</td>
+                                            <td>{{ detalle.tiempo_proceso|default:"-" }} min</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-info" data-toggle="collapse" data-target="#detalle{{ detalle.id }}">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr class="collapse" id="detalle{{ detalle.id }}">
+                                            <td colspan="6">
+                                                <div class="p-3 bg-light">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            {% if detalle.numero_husos %}
+                                                            <p><strong>Número de Husos:</strong> {{ detalle.numero_husos }}</p>
+                                                            {% endif %}
+                                                            {% if detalle.velocidad_cardado %}
+                                                            <p><strong>Velocidad de Cardado:</strong> {{ detalle.velocidad_cardado }} m/min</p>
+                                                            {% endif %}
+                                                            {% if detalle.limpieza_fibras %}
+                                                            <p><strong>Limpieza de Fibras:</strong> {{ detalle.get_limpieza_fibras_display }}</p>
+                                                            {% endif %}
+                                                            {% if detalle.longitud_fibra_eliminada %}
+                                                            <p><strong>Fibra Corta Eliminada:</strong> {{ detalle.longitud_fibra_eliminada }} mm</p>
+                                                            {% endif %}
+                                                            {% if detalle.porcentaje_impurezas_removidas %}
+                                                            <p><strong>Impurezas Removidas:</strong> {{ detalle.porcentaje_impurezas_removidas }}%</p>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {% if detalle.grado_torsion %}
+                                                            <p><strong>Grado de Torsión:</strong> {{ detalle.get_grado_torsion_display }}</p>
+                                                            {% endif %}
+                                                            {% if detalle.uniformidad %}
+                                                            <p><strong>Uniformidad:</strong> {{ detalle.uniformidad }}%</p>
+                                                            {% endif %}
+                                                            {% if detalle.defectos_encontrados %}
+                                                            <p><strong>Defectos:</strong> {{ detalle.defectos_encontrados }}</p>
+                                                            {% endif %}
+                                                            {% if detalle.notas_tecnicas %}
+                                                            <p><strong>Notas Técnicas:</strong> {{ detalle.notas_tecnicas }}</p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para completar proceso -->
+<div class="modal fade" id="completarModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Completar Proceso de Hilatura</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form method="post" action="{% url 'completar_hilatura' hilatura.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Cantidad de Hilo Producido (kg) *</label>
+                        <input type="number" name="cantidad_hilo_salida" class="form-control" 
+                               step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Torsión (TPM)</label>
+                        <input type="number" name="torsion" class="form-control" 
+                               step="0.01" min="0" placeholder="Torsiones por metro">
+                    </div>
+                    <div class="form-group">
+                        <label>Resistencia (cN/tex)</label>
+                        <input type="number" name="resistencia" class="form-control" 
+                               step="0.01" min="0" placeholder="Resistencia del hilo">
+                    </div>
+                    <div class="form-group">
+                        <label>Calidad del Resultado *</label>
+                        <select name="calidad_resultado" class="form-control" required>
+                            <option value="excelente">Excelente</option>
+                            <option value="buena">Buena</option>
+                            <option value="regular">Regular</option>
+                            <option value="deficiente">Deficiente</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check"></i> Completar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

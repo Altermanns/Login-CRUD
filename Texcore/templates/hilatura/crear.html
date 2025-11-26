@@ -1,0 +1,98 @@
+{% extends "paginas/base.html" %}
+
+{% block title %}Crear Proceso de Hilatura{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-spinner"></i> Nuevo Proceso de Hilatura
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="etapa">Etapa del Proceso *</label>
+                            <select name="etapa" id="etapa" class="form-control" required>
+                                <option value="">Seleccione una etapa</option>
+                                <option value="cardado">Cardado - Desenredar y alinear fibras</option>
+                                <option value="peinado">Peinado - Eliminar impurezas y fibras cortas</option>
+                                <option value="hilado">Hilado - Torsión para formar hilos resistentes</option>
+                            </select>
+                            <small class="form-text text-muted">
+                                Seleccione la etapa del proceso de hilatura
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="preparacion_origen">Preparación de Origen</label>
+                            <select name="preparacion_origen" id="preparacion_origen" class="form-control">
+                                <option value="">Sin preparación asociada</option>
+                                {% for prep in preparaciones %}
+                                <option value="{{ prep.id }}">
+                                    {{ prep.materia_prima.tipo }} - {{ prep.get_tipo_proceso_display }} 
+                                    ({{ prep.cantidad_procesada|floatformat:2 }} kg)
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="form-text text-muted">
+                                Opcional: Seleccione la preparación de materia prima que origina este proceso
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cantidad_fibra_entrada">Cantidad de Fibra de Entrada (kg) *</label>
+                            <input type="number" name="cantidad_fibra_entrada" id="cantidad_fibra_entrada" 
+                                   class="form-control" step="0.01" min="0" required 
+                                   placeholder="Ej: 100.50">
+                            <small class="form-text text-muted">
+                                Cantidad de fibra que ingresa al proceso
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="titulo_hilo">Título del Hilo</label>
+                            <input type="text" name="titulo_hilo" id="titulo_hilo" 
+                                   class="form-control" maxlength="50" 
+                                   placeholder="Ej: Ne 30/1, Nm 50/2, Tex 20">
+                            <small class="form-text text-muted">
+                                Sistema de numeración del hilo (Ne, Nm, Tex, Denier, etc.)
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="observaciones">Observaciones</label>
+                            <textarea name="observaciones" id="observaciones" 
+                                      class="form-control" rows="3" 
+                                      placeholder="Observaciones del proceso..."></textarea>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <strong><i class="fas fa-info-circle"></i> Información sobre las etapas:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li><strong>Cardado:</strong> Proceso de desenredar y alinear las fibras</li>
+                                <li><strong>Peinado:</strong> Elimina impurezas y fibras cortas para obtener fibras largas y paralelas</li>
+                                <li><strong>Hilado:</strong> Aplica torsión a las fibras para formar hilos resistentes</li>
+                            </ul>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Crear Proceso
+                            </button>
+                            <a href="{% url 'listar_hilaturas' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "paginas/base.html" %}
+
+{% block title %}Editar Proceso de Hilatura{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-edit"></i> Editar Proceso de Hilatura #{{ hilatura.id }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label for="etapa">Etapa del Proceso *</label>
+                            <select name="etapa" id="etapa" class="form-control" required>
+                                <option value="cardado" {% if hilatura.etapa == 'cardado' %}selected{% endif %}>
+                                    Cardado - Desenredar y alinear fibras
+                                </option>
+                                <option value="peinado" {% if hilatura.etapa == 'peinado' %}selected{% endif %}>
+                                    Peinado - Eliminar impurezas y fibras cortas
+                                </option>
+                                <option value="hilado" {% if hilatura.etapa == 'hilado' %}selected{% endif %}>
+                                    Hilado - Torsión para formar hilos resistentes
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="preparacion_origen">Preparación de Origen</label>
+                            <select name="preparacion_origen" id="preparacion_origen" class="form-control">
+                                <option value="">Sin preparación asociada</option>
+                                {% for prep in preparaciones %}
+                                <option value="{{ prep.id }}" {% if hilatura.preparacion_origen.id == prep.id %}selected{% endif %}>
+                                    {{ prep.materia_prima.tipo }} - {{ prep.get_tipo_proceso_display }} 
+                                    ({{ prep.cantidad_procesada|floatformat:2 }} kg)
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cantidad_fibra_entrada">Cantidad de Fibra de Entrada (kg) *</label>
+                            <input type="number" name="cantidad_fibra_entrada" id="cantidad_fibra_entrada" 
+                                   class="form-control" step="0.01" min="0" required 
+                                   value="{{ hilatura.cantidad_fibra_entrada }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="titulo_hilo">Título del Hilo</label>
+                            <input type="text" name="titulo_hilo" id="titulo_hilo" 
+                                   class="form-control" maxlength="50" 
+                                   value="{{ hilatura.titulo_hilo }}"
+                                   placeholder="Ej: Ne 30/1, Nm 50/2, Tex 20">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="observaciones">Observaciones</label>
+                            <textarea name="observaciones" id="observaciones" 
+                                      class="form-control" rows="3">{{ hilatura.observaciones }}</textarea>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                            <a href="{% url 'detalle_hilatura' hilatura.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

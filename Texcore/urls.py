@@ -5,6 +5,7 @@ from .views import (
     materia_views,
     user_views,
     preparacion_views,
+    hilatura_views,
 )
 
 urlpatterns = [
@@ -38,4 +39,15 @@ urlpatterns = [
     path('preparaciones/<int:preparacion_id>/eliminar/', preparacion_views.eliminar_preparacion, name='eliminar_preparacion'),
     path('preparaciones/<int:preparacion_id>/detalle/', preparacion_views.agregar_detalle_preparacion, name='agregar_detalle_preparacion'),
     path('preparaciones/reporte/', preparacion_views.reporte_preparaciones, name='reporte_preparaciones'),
+    
+    # Hilatura (operario + admin)
+    path('hilaturas/', hilatura_views.listar_hilaturas, name='listar_hilaturas'),
+    path('hilaturas/crear/', hilatura_views.crear_hilatura, name='crear_hilatura'),
+    path('hilaturas/<int:hilatura_id>/', hilatura_views.detalle_hilatura, name='detalle_hilatura'),
+    path('hilaturas/<int:hilatura_id>/iniciar/', hilatura_views.iniciar_hilatura, name='iniciar_hilatura'),
+    path('hilaturas/<int:hilatura_id>/completar/', hilatura_views.completar_hilatura, name='completar_hilatura'),
+    path('hilaturas/<int:hilatura_id>/editar/', hilatura_views.editar_hilatura, name='editar_hilatura'),
+    path('hilaturas/<int:hilatura_id>/eliminar/', hilatura_views.eliminar_hilatura, name='eliminar_hilatura'),
+    path('hilaturas/<int:hilatura_id>/detalle/', hilatura_views.agregar_detalle_hilatura, name='agregar_detalle_hilatura'),
+    path('hilaturas/reporte/', hilatura_views.reporte_hilaturas, name='reporte_hilaturas'),
 ]

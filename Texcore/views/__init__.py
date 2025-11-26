@@ -16,6 +16,17 @@ from .preparacion_views import (
     eliminar_preparacion,
     reporte_preparaciones,
 )
+from .hilatura_views import (
+    listar_hilaturas,
+    crear_hilatura,
+    detalle_hilatura,
+    iniciar_hilatura,
+    completar_hilatura,
+    agregar_detalle_hilatura,
+    editar_hilatura,
+    eliminar_hilatura,
+    reporte_hilaturas,
+)
 
 __all__ = [
     'inicio',
@@ -43,4 +54,13 @@ __all__ = [
     'editar_preparacion',
     'eliminar_preparacion',
     'reporte_preparaciones',
+    'listar_hilaturas',
+    'crear_hilatura',
+    'detalle_hilatura',
+    'iniciar_hilatura',
+    'completar_hilatura',
+    'agregar_detalle_hilatura',
+    'editar_hilatura',
+    'eliminar_hilatura',
+    'reporte_hilaturas',
 ]

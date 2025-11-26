@@ -20,6 +20,15 @@ from .dashboard_service import (
     get_operario_dashboard_stats,
     get_preparador_dashboard_stats,
 )
+from .hilatura_service import (
+    get_all_hilaturas,
+    crear_proceso_hilatura,
+    iniciar_proceso_hilatura,
+    completar_proceso_hilatura,
+    agregar_detalle_hilatura,
+    filtrar_hilaturas,
+    obtener_estadisticas_hilatura,
+)
 
 __all__ = [
     'authenticate_user',
@@ -35,4 +44,11 @@ __all__ = [
     'get_admin_dashboard_stats',
     'get_operario_dashboard_stats',
     'get_preparador_dashboard_stats',
+    'get_all_hilaturas',
+    'crear_proceso_hilatura',
+    'iniciar_proceso_hilatura',
+    'completar_proceso_hilatura',
+    'agregar_detalle_hilatura',
+    'filtrar_hilaturas',
+    'obtener_estadisticas_hilatura',
 ]
