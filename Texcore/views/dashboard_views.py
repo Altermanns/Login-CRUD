@@ -7,18 +7,20 @@ from ..decorators import (
     admin_required,
     operario_required,
     preparador_required,
-    admin_or_operario_required
+    any_role_required
 )
 from ..services import dashboard_service
 
 
-@admin_or_operario_required
+@any_role_required
 def dashboard(request: Any):
     """Authenticated dashboard view - redirects based on role."""
     if hasattr(request.user, 'profile'):
         if request.user.profile.is_admin:
             return redirect('admin_dashboard')
-        else:
+        elif request.user.profile.is_preparador:
+            return redirect('preparador_dashboard')
+        elif request.user.profile.is_operario:
             return redirect('operario_dashboard')
     return render(request, 'paginas/dashboard.html')
 

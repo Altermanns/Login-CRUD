@@ -95,3 +95,20 @@ def admin_or_preparador_required(view_func):
         
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+
+
+def any_role_required(view_func):
+    """
+    Decorator that allows any authenticated user with a profile.
+    Usage: @any_role_required
+    """
+    @wraps(view_func)
+    @login_required
+    def _wrapped_view(request, *args, **kwargs):
+        # Check if user has a profile
+        if not hasattr(request.user, 'profile'):
+            messages.error(request, 'Tu usuario no tiene un perfil asignado. Contacta al administrador.')
+            return redirect('inicio')
+        
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
