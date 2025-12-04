@@ -1,23 +1,31 @@
 /* Commercial global site styles */
-html, body {
+html {
   height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Use viewport height */
   background: linear-gradient(180deg, #fbfdff 0%, #f1f5f9 100%);
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, "Helvetica Neue";
   color: #0f172a;
 }
 
-:root{
-  --brand: #2563eb;
-  --brand-600: #1e40af;
-  --muted: #64748b;
-  --card-bg: #ffffff;
+main {
+  flex: 1 0 auto; /* Allow main content to grow and shrink */
+  margin-bottom: 3rem; /* Add breathing room above the footer */
 }
 
-/* Footer sizing for sticky footer */
-:root{ --footer-height: 64px }
+.site-footer {
+  flex-shrink: 0; /* Prevent footer from shrinking */
+  height: var(--footer-height);
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  background: #fff;
+}
 
-/* ensure content does not get hidden behind the sticky footer */
-body{ padding-bottom: var(--footer-height); }
 
 .navbar{
   background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));
@@ -95,18 +103,7 @@ table.table tbody td{ vertical-align:middle }
   .card:hover{ transform:none }
 }
 
-/* sticky footer styles */
-.site-footer{
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--footer-height);
-  z-index: 1030;
-  display: flex;
-  align-items: center;
-  background: #fff;
-}
+
 
 @media (max-width: 576px){
   :root{ --footer-height: 88px }

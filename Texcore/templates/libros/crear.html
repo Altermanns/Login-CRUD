@@ -3,12 +3,12 @@
 {% block titulo %}Ingresar Materia Prima{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-0">
     <h2 class="text-center mb-4">Ingresar Nueva Materia Prima</h2>
 
     <form method="post">
         {% csrf_token %}
-        <div class="card p-4 shadow-sm form-card">
+        <div class="card p-4 shadow-sm">
             <div class="form-row">
                 <div class="form-group col-12">
                     {{ form.tipo.label_tag }}
